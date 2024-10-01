@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "253966397738",
+    "project_id": "mender-4a206",
+    "storage_bucket": "mender-4a206.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253966397738:android:0218c87400da477f616e53",
+        "android_client_info": {
+          "package_name": "com.andriod.menderfront"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "253966397738-e28nq1va269q94ldl340ia86hf26na31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb_cdHFC1Aw1cl0cXMzH8gItQHQuJiNE0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "253966397738-e28nq1va269q94ldl340ia86hf26na31.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
