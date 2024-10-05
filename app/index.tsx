@@ -1,7 +1,8 @@
 import { Text, View } from "react-native";
 import store from './store/store';
 import { Provider } from 'react-redux';
-import Login from "./auth/login";
+import Login from "./screens/login";
+import Home from "@/app/screens/home";
 
 export default function Index() {
   return (
@@ -13,7 +14,8 @@ export default function Index() {
             alignItems: "center",
           }}
         >
-          <Login></Login>
+          {/*<Login></Login>*/}
+            <Home></Home>
         </View>
       </Provider>
   );
