@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>253966397738-ka0em1sbl87e7nc25kaj168qavlttq72.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.253966397738-ka0em1sbl87e7nc25kaj168qavlttq72</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBRbOV7IWZAwN8Wp_siuzTlKhtYqlpKvO0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>253966397738</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ios.menderfront</string>
+	<key>PROJECT_ID</key>
+	<string>mender-4a206</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mender-4a206.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:253966397738:ios:0bb0fda752c60279616e53</string>
+</dict>
+</plist>

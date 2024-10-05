@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import store from './store/store';
 import { Provider } from 'react-redux';
+import Login from "./auth/login";
 
 export default function Index() {
   return (
@@ -12,7 +13,7 @@ export default function Index() {
             alignItems: "center",
           }}
         >
-          <Text>asd.</Text>
+          <Login></Login>
         </View>
       </Provider>
   );
