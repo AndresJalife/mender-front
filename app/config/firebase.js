@@ -1,12 +1,12 @@
-import firebase from '@firebase/app';
-import config from '../../firebase-config.json'; // Path to your Firebase config file
+import { initializeApp } from 'firebase/app';
+import config from '../../firebase-config.json';
 
 let instance = null;
 
 class FirebaseService {
     constructor() {
         if (!instance) {
-            this.app = firebase.initializeApp(config);
+            this.app = initializeApp(config);
             instance = this;
         }
         return instance;

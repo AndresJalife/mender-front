@@ -10,7 +10,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2F11F37F2CACD5B800D57C57 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F11F37E2CACD5B800D57C57 /* GoogleService-Info.plist */; };
+		2F6F47942CB1C06600303A6C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F6F47932CB1C06600303A6C /* GoogleService-Info.plist */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		6D5928F983FE4E47BD05E48F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A5CEB52D104687A62DCA3A /* noop-file.swift */; };
 		A7CFE2C6E4AFC0BAD368EA35 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 35ACA4A421C485D9FEEA9527 /* PrivacyInfo.xcprivacy */; };
@@ -28,7 +28,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = menderfront/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = menderfront/main.m; sourceTree = "<group>"; };
 		1B7BB86AABA6DC09CBC88F79 /* Pods-menderfront.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-menderfront.debug.xcconfig"; path = "Target Support Files/Pods-menderfront/Pods-menderfront.debug.xcconfig"; sourceTree = "<group>"; };
-		2F11F37E2CACD5B800D57C57 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2F6F47932CB1C06600303A6C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		35ACA4A421C485D9FEEA9527 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = menderfront/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5487609BBF23D7970220DAEC /* Pods_menderfront.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_menderfront.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99A5CEB52D104687A62DCA3A /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "menderfront/noop-file.swift"; sourceTree = "<group>"; };
@@ -57,9 +57,9 @@
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				2F6F47932CB1C06600303A6C /* GoogleService-Info.plist */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				2F11F37E2CACD5B800D57C57 /* GoogleService-Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				99A5CEB52D104687A62DCA3A /* noop-file.swift */,
@@ -210,7 +210,7 @@
 			files = (
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				2F11F37F2CACD5B800D57C57 /* GoogleService-Info.plist in Resources */,
+				2F6F47942CB1C06600303A6C /* GoogleService-Info.plist in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				A7CFE2C6E4AFC0BAD368EA35 /* PrivacyInfo.xcprivacy in Resources */,
 			);
@@ -480,10 +480,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -556,10 +553,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
