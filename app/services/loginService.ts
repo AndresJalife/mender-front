@@ -22,7 +22,7 @@ export const loginService = {
 
             const data: LoginResponse = await response.json();
             
-            if (data.success && data.token) {
+            if (data.token) {
                 // TODO: Store the token securely (e.g., in AsyncStorage or secure storage)
                 return true;
             }

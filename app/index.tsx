@@ -6,7 +6,7 @@ import Home from "@/app/screens/home";
 import {useState} from "react";
 
 export default function Index() {
-    const [isLogggendIn, setIsLoggedIn] = useState(false);
+    const [isLogggendIn, setIsLoggedIn] = useState(true);
 
     const getHomeScreen = () => {
         if (isLogggendIn) {
