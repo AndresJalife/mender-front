@@ -1,12 +1,18 @@
+import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
+import { loginSuccess } from '../store/auth';
+import { store } from '../store/store'; // Make sure to export store instance
+
 interface LoginCredentials {
     email: string;
     password: string;
 }
 
 interface LoginResponse {
-    success: boolean;
     message?: string;
     token?: string;
+    user_id: number;
+    email: string;
+    name: string;
 }
 
 export const loginService = {
@@ -23,7 +29,15 @@ export const loginService = {
             const data: LoginResponse = await response.json();
             
             if (data.token) {
-                // TODO: Store the token securely (e.g., in AsyncStorage or secure storage)
+                // Dispatch login success action to Redux store
+                store.dispatch(loginSuccess({
+                    token: data.token,
+                    user: {
+                        id: data.user_id, // You might want to get these from the API
+                        email: data.email,
+                        name: data.name
+                    }
+                }));
                 return true;
             }
             

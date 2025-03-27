@@ -2,9 +2,9 @@ import { BottomNavigation as BottomNavigationComp, Text } from 'react-native-pap
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Carousel from "@/app/components/Carousel";
-import ChatScreen from "@/app/screens/chat";
-import ProfileScreen from "@/app/screens/profile";
-import SearchScreen from "@/app/screens/search";
+import ChatScreen from "@/app/screens/ChatScreen";
+import { ProfileScreen } from "@/app/screens/ProfileScreen";
+import SearchScreen from "@/app/screens/SearchScreen";
 
 interface BottomNavigationProps {
     data?: any[];
