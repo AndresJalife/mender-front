@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
 import BottomNavigation from "@/app/components/BottomNavigation";
-import Carousel from "@/app/components/Carousel";
 
 
 const data = [
