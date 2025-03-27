@@ -12,11 +12,8 @@ import {
 } from "react-native";
 import { loginService } from "../services/loginService";
 
-interface LoginProps {
-    setLoggedIn?: (value: (((prevState: boolean) => boolean) | boolean)) => void
-}
 
-export default function LoginScreen({setLoggedIn}: LoginProps) {
+export default function LoginScreen() {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [error, setError] = React.useState("");
@@ -34,9 +31,9 @@ export default function LoginScreen({setLoggedIn}: LoginProps) {
         try {
             const success = await loginService.login({ email, password });
             if (success) {
-                if (setLoggedIn) {
-                    setLoggedIn(true);
-                }
+                // if (setLoggedIn) {
+                //     setLoggedIn(true);
+                // }
             } else {
                 setError("Invalid email or password");
             }

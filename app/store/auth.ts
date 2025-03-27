@@ -13,9 +13,13 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
+  user: {
+    id: 1,
+    name: "Usuario de Prueba",
+    email: "prueba@gmail.com"
+  },
   token: null,
-  isAuthenticated: false
+  isAuthenticated: true
 }
 
 const authSlice = createSlice({
