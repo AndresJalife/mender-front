@@ -1,9 +1,0 @@
-
-class LoginService {
-
-
-
-  async login() {
-    // ...
-  }
-}

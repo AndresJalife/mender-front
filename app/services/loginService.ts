@@ -3,18 +3,34 @@ interface LoginCredentials {
     password: string;
 }
 
+interface LoginResponse {
+    success: boolean;
+    message?: string;
+    token?: string;
+}
+
 export const loginService = {
     login: async (credentials: LoginCredentials): Promise<boolean> => {
-        // TODO: Replace with actual API call
-        // For now, we'll simulate an API call with a delay
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                if (credentials.email === "test" && credentials.password === "test") {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            }, 1000);
-        });
+        try {
+            const response = await fetch('http://143.244.190.174:8443/general/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(credentials),
+            });
+
+            const data: LoginResponse = await response.json();
+            
+            if (data.success && data.token) {
+                // TODO: Store the token securely (e.g., in AsyncStorage or secure storage)
+                return true;
+            }
+            
+            return false;
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
+        }
     }
 }; 
