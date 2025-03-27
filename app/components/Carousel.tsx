@@ -26,7 +26,8 @@ const Carousel: React.FC<IndexProps> = ({items}) => {
             <CarouselComp
                 width={Dimensions.get('window').width}
                 autoPlay={false}
-                height={Dimensions.get('window').height}
+                height={Dimensions.get('window').height - 150}
+                style={{ backgroundColor: 'black', marginBottom: '10%' }}
                 vertical={true}
                 onSnapToItem={onNext}
                 data={items}
@@ -41,7 +42,8 @@ const Carousel: React.FC<IndexProps> = ({items}) => {
 const styles = StyleSheet.create({
     carouselContainer: {
         flex: 1, // ✅ Makes Carousel take full height
-        marginBottom: 56, // ✅ Ensures Carousel does not overlap Bottom Navigation
+        // marginBottom: 56, // ✅ Ensures Carousel does not overlap Bottom Navigation
+        zIndex: 1
     },
 });
 

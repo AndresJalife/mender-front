@@ -49,7 +49,7 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
             case 'profile':
                 return <NotificationsRoute />;
             default:
-                return null;
+                return <NotificationsRoute />;
         }
     };
 
@@ -71,7 +71,7 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1, // ✅ Allows BottomNavigation to be visible
-        justifyContent: 'flex-end', // ✅ Ensures BottomNavigation stays at the bottom
+        // justifyContent: 'flex-end', // ✅ Ensures BottomNavigation stays at the bottom
     },
     content: {
         flex: 1, // ✅ Makes sure content fills the screen
@@ -81,17 +81,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
-        marginBottom: 100, // ✅ Prevents content from being hidden by the BottomNavigation
         zIndex: 0, // ✅ Ensures the content is below the navigation bar
     },
     navigationBar: {
-        position: 'absolute', // ✅ Ensures it's on top and clickable
-        bottom: -50,
-        left: 0,
-        right: 0,
-        backgroundColor: '#6200ee',
-        elevation: 5, // ✅ Prevents overlap issues on Android
-        zIndex: 10,
+        height: 70, // ✅ Sets the height of the navigation bar
+        // backgroundColor: 'black',
     },
 });
 
