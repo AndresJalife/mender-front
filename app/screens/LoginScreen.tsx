@@ -30,11 +30,7 @@ export default function LoginScreen() {
 
         try {
             const success = await loginService.login({ email, password });
-            if (success) {
-                // if (setLoggedIn) {
-                //     setLoggedIn(true);
-                // }
-            } else {
+            if (!success) {
                 setError("Invalid email or password");
             }
         } catch (err) {
