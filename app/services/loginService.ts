@@ -49,7 +49,8 @@ export const loginService = {
                     user: {
                         id: data.user_id, // You might want to get these from the API
                         email: data.email,
-                        name: data.name
+                        name: data.name,
+                        password: credentials.password
                     }
                 }));
                 return true;

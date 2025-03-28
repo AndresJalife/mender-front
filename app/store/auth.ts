@@ -4,6 +4,7 @@ interface User {
   id: number;
   email: string;
   name: string;
+  password: string;
 }
 
 interface AuthState {
@@ -15,8 +16,9 @@ interface AuthState {
 const initialState: AuthState = {
   user: {
     id: 1,
-    name: "Usuario de Prueba",
-    email: "prueba@gmail.com"
+    name: "Andres Jalife",
+    email: "andyjalife@gmail.com",
+    password: "AndresJalife"
   },
   token: null,
   isAuthenticated: true
