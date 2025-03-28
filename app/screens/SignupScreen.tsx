@@ -9,8 +9,8 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Modal,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 
 export default function SignupScreen({ navigation }: { navigation: any }) {
     const [email, setEmail] = React.useState("");
@@ -21,6 +21,19 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
     const [password, setPassword] = React.useState("");
     const [error, setError] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
+    const [showCountryPicker, setShowCountryPicker] = React.useState(false);
+    const [showSexPicker, setShowSexPicker] = React.useState(false);
+
+    const countries = [
+        { label: "Argentina", value: "ar" },
+        // Add more countries as needed
+    ];
+
+    const sexes = [
+        { label: "Male", value: "M" },
+        { label: "Female", value: "F" },
+        { label: "Other", value: "O" },
+    ];
 
     const handleSignup = async () => {
         if (!email || !name || !username || !password) {
@@ -109,27 +122,26 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Country</Text>
-                        <Picker
-                            selectedValue={country}
-                            onValueChange={(itemValue) => setCountry(itemValue)}
-                            style={styles.picker}
+                        <TouchableOpacity
+                            style={styles.dropdownButton}
+                            onPress={() => setShowCountryPicker(true)}
                         >
-                            <Picker.Item label="Argentina" value="ar" />
-                            {/* Add more countries as needed */}
-                        </Picker>
+                            <Text style={styles.dropdownButtonText}>
+                                {countries.find(c => c.value === country)?.label || "Select Country"}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Sex</Text>
-                        <Picker
-                            selectedValue={sex}
-                            onValueChange={(itemValue) => setSex(itemValue)}
-                            style={styles.picker}
+                        <TouchableOpacity
+                            style={styles.dropdownButton}
+                            onPress={() => setShowSexPicker(true)}
                         >
-                            <Picker.Item label="Male" value="M" />
-                            <Picker.Item label="Female" value="F" />
-                            <Picker.Item label="Other" value="O" />
-                        </Picker>
+                            <Text style={styles.dropdownButtonText}>
+                                {sexes.find(s => s.value === sex)?.label || "Select Sex"}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.inputContainer}>
@@ -158,6 +170,82 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            <Modal
+                visible={showCountryPicker}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowCountryPicker(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Select Country</Text>
+                            <TouchableOpacity onPress={() => setShowCountryPicker(false)}>
+                                <Text style={styles.modalCloseButton}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {countries.map((item) => (
+                            <TouchableOpacity
+                                key={item.value}
+                                style={[
+                                    styles.modalItem,
+                                    country === item.value && styles.modalItemSelected
+                                ]}
+                                onPress={() => {
+                                    setCountry(item.value);
+                                    setShowCountryPicker(false);
+                                }}
+                            >
+                                <Text style={[
+                                    styles.modalItemText,
+                                    country === item.value && styles.modalItemTextSelected
+                                ]}>
+                                    {item.label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                visible={showSexPicker}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowSexPicker(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Select Sex</Text>
+                            <TouchableOpacity onPress={() => setShowSexPicker(false)}>
+                                <Text style={styles.modalCloseButton}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {sexes.map((item) => (
+                            <TouchableOpacity
+                                key={item.value}
+                                style={[
+                                    styles.modalItem,
+                                    sex === item.value && styles.modalItemSelected
+                                ]}
+                                onPress={() => {
+                                    setSex(item.value);
+                                    setShowSexPicker(false);
+                                }}
+                            >
+                                <Text style={[
+                                    styles.modalItemText,
+                                    sex === item.value && styles.modalItemTextSelected
+                                ]}>
+                                    {item.label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+            </Modal>
         </KeyboardAvoidingView>
     );
 }
@@ -214,12 +302,61 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: "#f9f9f9",
     },
-    picker: {
+    dropdownButton: {
         height: 50,
         borderWidth: 1,
         borderColor: "#ddd",
         borderRadius: 8,
+        paddingHorizontal: 16,
+        justifyContent: "center",
         backgroundColor: "#f9f9f9",
+    },
+    dropdownButtonText: {
+        fontSize: 16,
+        color: "#333",
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        justifyContent: "flex-end",
+    },
+    modalContent: {
+        backgroundColor: "#fff",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+        maxHeight: "80%",
+    },
+    modalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#333",
+    },
+    modalCloseButton: {
+        fontSize: 16,
+        color: "#007AFF",
+    },
+    modalItem: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+    },
+    modalItemSelected: {
+        backgroundColor: "#f0f0f0",
+    },
+    modalItemText: {
+        fontSize: 16,
+        color: "#333",
+    },
+    modalItemTextSelected: {
+        color: "#007AFF",
+        fontWeight: "600",
     },
     button: {
         backgroundColor: "#007AFF",
