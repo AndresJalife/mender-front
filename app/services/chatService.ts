@@ -9,7 +9,7 @@ export interface Message {
 export const chatService = {
     getMessages: async (): Promise<Message[]> => {
         try {
-            const response = await getAuthenticatedRequest('/chat');
+            const response = await getAuthenticatedRequest('/chat/');
             if (!response.ok) {
                 throw new Error('Failed to fetch messages');
             }
