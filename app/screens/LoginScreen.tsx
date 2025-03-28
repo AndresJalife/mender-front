@@ -11,7 +11,7 @@ import {
     Image
 } from "react-native";
 import { loginService } from "../services/loginService";
-
+import { Link } from "expo-router";
 
 export default function LoginScreen() {
     const [email, setEmail] = React.useState("");
@@ -88,6 +88,12 @@ export default function LoginScreen() {
                             <Text style={styles.buttonText}>Sign In</Text>
                         )}
                     </TouchableOpacity>
+
+                    <Link href="/screens/SignupScreen" asChild>
+                        <TouchableOpacity style={styles.signupButton}>
+                            <Text style={styles.signupButtonText}>Don't have an account? Sign Up</Text>
+                        </TouchableOpacity>
+                    </Link>
                 </View>
             </View>
         </KeyboardAvoidingView>
@@ -170,5 +176,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 8,
         textAlign: "center",
+    },
+    signupButton: {
+        marginTop: 16,
+        paddingVertical: 12,
+        alignItems: "center",
+    },
+    signupButtonText: {
+        color: "#007AFF",
+        fontSize: 16,
+        fontWeight: "500",
     },
 });

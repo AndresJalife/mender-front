@@ -11,8 +11,10 @@ import {
     ScrollView,
     Modal,
 } from "react-native";
+import { router } from "expo-router";
+import { loginService } from "../services/loginService";
 
-export default function SignupScreen({ navigation }: { navigation: any }) {
+export default function SignupScreen() {
     const [email, setEmail] = React.useState("");
     const [name, setName] = React.useState("");
     const [username, setUsername] = React.useState("");
@@ -26,7 +28,6 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 
     const countries = [
         { label: "Argentina", value: "ar" },
-        // Add more countries as needed
     ];
 
     const sexes = [
@@ -45,28 +46,23 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
         setError("");
 
         try {
-            const response = await fetch('http://143.244.190.174:8443/general/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    name,
-                    username,
-                    country,
-                    new: true,
-                    sex,
-                    password,
-                }),
+            const response = await loginService.signup({
+                email,
+                name,
+                username,
+                country,
+                sex,
+                password,
             });
-
-            const data = await response.json();
             
-            if (response.ok) {
-                navigation.navigate('Login');
+            if (response.success) {
+                const success = await loginService.login({ email, password });
+                if (!success) {
+                    setError("Invalid email or password");
+                }
+                router.replace("/screens/MainScreen");
             } else {
-                setError(data.message || "Registration failed");
+                setError(response.message || "Registratiron failed");
             }
         } catch (err) {
             setError("An error occurred. Please try again.");

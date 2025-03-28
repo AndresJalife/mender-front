@@ -7,12 +7,26 @@ interface LoginCredentials {
     password: string;
 }
 
+interface SignupCredentials {
+    email: string;
+    password: string;
+    name: string;
+    username: string;
+    country: string;
+    sex: string;
+}
+
 interface LoginResponse {
     message?: string;
     token?: string;
     user_id: number;
     email: string;
     name: string;
+}
+
+interface SignupResponse {
+    message?: string;
+    success: boolean;
 }
 
 export const loginService = {
@@ -45,6 +59,36 @@ export const loginService = {
         } catch (error) {
             console.error('Login error:', error);
             throw error;
+        }
+    },
+
+    signup: async (credentials: SignupCredentials): Promise<SignupResponse> => {
+        try {
+            const response = await fetch('http://143.244.190.174:8443/general/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...credentials,
+                    new: true,
+                }),
+            });
+
+            const data: SignupResponse = await response.json();
+
+            if (response.status === 201) {
+                return { success: true };
+            } else {
+                return { success: false, message: data.message };
+            }
+
+        } catch (error: unknown) {
+            console.error('Signup error:', error);
+            if (error instanceof Error) {
+                return { success: false, message: error.message };
+            }
+            return { success: false, message: 'An unknown error occurred' };
         }
     }
 }; 

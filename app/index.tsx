@@ -1,13 +1,7 @@
 // App.tsx
 import React from 'react';
-import { Provider } from 'react-redux';
-import store from './store/store';
-import Index from './screens/MainScreen'; // or whatever your main component is
+import MainScreen from './screens/MainScreen';
 
 export default function App() {
-  return (
-    <Provider store={store}>
-      <Index />
-    </Provider>
-  );
+  return <MainScreen />;
 }
