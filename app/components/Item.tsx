@@ -12,15 +12,16 @@ interface Props {
 const Item: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
     return (
         <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                <Text style={styles.title}>{data.entity?.title}</Text>
+                <Text style={styles.director}>{data.entity?.director}</Text>
+            </View>
             <VideoPlayer 
                 url={data.entity?.link} 
                 activeItem={activeItem}
                 isHomeTab={isHomeTab}
             />
             <View style={styles.contentContainer}>
-                <Text style={styles.title}>{data.entity?.title}</Text>
-                <Text style={styles.director}>{data.entity?.director}</Text>
-                
                 {/* Rating and Year */}
                 <View style={styles.ratingContainer}>
                     <Text style={styles.rating}>⭐ {data.entity?.rating || 'N/A'}</Text>
@@ -56,13 +57,18 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'red',
     },
+    headerContainer: {
+        backgroundColor: '#1a1a1a',
+        paddingHorizontal: 16,
+        paddingTop: 40,
+        paddingBottom: 12,
+    },
     contentContainer: {
         backgroundColor: '#1a1a1a',
         padding: 16,
         paddingTop: 16,
         paddingBottom: 0,
         flex: 1,
-        height: '90%',
     },
     title: {
         fontSize: 24,
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
     director: {
         color: '#888888',
         fontSize: 16,
-        marginBottom: 12,
+        marginBottom: 4,
     },
     ratingContainer: {
         flexDirection: 'row',

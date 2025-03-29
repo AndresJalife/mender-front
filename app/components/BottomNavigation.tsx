@@ -18,6 +18,7 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
         { key: 'chat', title: 'Chat', focusedIcon: 'comment' },
         { key: 'profile', title: 'Profile', focusedIcon: 'account' },
     ]);
+    
     const [index, setIndex] = useState(0);
     const currentTab = routes[index].key;
 
