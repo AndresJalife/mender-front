@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     headerContainer: {
         backgroundColor: '#1a1a1a',
         paddingHorizontal: 16,
-        paddingTop: 40,
+        paddingTop: 50,
         paddingBottom: 12,
     },
     contentContainer: {
@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ffffff',
         marginBottom: 8,
+        paddingRight: 30,
+        marginRight: 15,
     },
     director: {
         color: '#888888',

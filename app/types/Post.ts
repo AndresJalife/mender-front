@@ -20,4 +20,9 @@ export interface Post {
     created_date?: string;
 } 
 
+export interface Filters {
+    genre?: string;
+    year?: number;
+}
+
 export default Post;

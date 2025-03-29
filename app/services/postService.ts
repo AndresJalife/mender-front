@@ -1,9 +1,10 @@
 
 import { Post } from '@/app/types/Post';
 import { getAuthenticatedRequest } from './apiService';
+import { Filters } from '@/app/types/Post';
 
 export const postService = {
-    getPosts: async (): Promise<Post[]> => {
+    getPosts: async (filters: Filters): Promise<Post[]> => {
         try {
             const response = await getAuthenticatedRequest('/post');
             
