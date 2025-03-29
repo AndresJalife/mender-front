@@ -52,6 +52,11 @@ const SearchScreen = () => {
         router.push(`/screens/ItemScreen?id=${item.post_id}`);
     };
 
+    const handleClear = () => {
+        setQuery('');
+        setResults([]);
+    };
+
     const renderItem = ({ item }: { item: Post }) => (
         <TouchableOpacity 
             style={styles.resultItem}
@@ -75,14 +80,24 @@ const SearchScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TextInput
-                    style={styles.searchInput}
-                    value={query}
-                    onChangeText={handleQueryChange}
-                    placeholder="Search Movies or TV Shows..."
-                    placeholderTextColor={colors.textMuted}
-                    autoCapitalize="none"
-                />
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        value={query}
+                        onChangeText={handleQueryChange}
+                        placeholder="Search Movies or TV Shows..."
+                        placeholderTextColor={colors.textMuted}
+                        autoCapitalize="none"
+                    />
+                    {query.length > 0 && (
+                        <TouchableOpacity 
+                            style={styles.clearButton}
+                            onPress={handleClear}
+                        >
+                            <Text style={styles.clearButtonText}>✕</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
             </View>
 
             {isLoading && (
@@ -127,10 +142,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: colors.border,
     },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     searchInput: {
+        flex: 1,
         backgroundColor: colors.surfaceLight,
         borderRadius: 20,
         padding: 12,
+        paddingRight: 40,
         color: colors.textPrimary,
         fontSize: 16,
         shadowColor: '#FFFFFF',
@@ -143,6 +164,15 @@ const styles = StyleSheet.create({
         elevation: 2,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    clearButton: {
+        position: 'absolute',
+        right: 12,
+        padding: 4,
+    },
+    clearButtonText: {
+        color: colors.textMuted,
+        fontSize: 16,
     },
     resultsList: {
         padding: 16,
