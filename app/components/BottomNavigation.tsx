@@ -1,12 +1,15 @@
 import { BottomNavigation as BottomNavigationComp, Text } from 'react-native-paper';
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, LogBox } from 'react-native';
 import Carousel from "@/app/components/Carousel";
 import ChatScreen from "@/app/screens/ChatScreen";
 import { ProfileScreen } from "@/app/screens/ProfileScreen";
 import SearchScreen from "@/app/screens/SearchScreen";
 import { Post } from "@/app/types/Post";
 import FeedScreen from '../screens/FeedScreen';
+// @ts-ignore
+// eslint-disable-next-line no-console
+LogBox.ignoreLogs(['Warning: A props object containing a "key" prop']);
 
 const BottomNavigation = () => {
     const [routes] = useState([
@@ -46,6 +49,7 @@ const BottomNavigation = () => {
                 activeIndicatorStyle={{ opacity: 0 }}
                 labeled={false}
                 compact={true}
+                key={1}
             />
         </View>
     );

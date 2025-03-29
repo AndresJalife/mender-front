@@ -16,6 +16,8 @@ export interface Post {
     entity_type?: string;
     entity?: Entity;
     likes?: number;
+    liked?: boolean;
+    seen?: boolean;
     comments?: number;
     created_date?: string;
 } 
