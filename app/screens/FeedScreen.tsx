@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     },
     filterButton: {
         position: 'absolute',
-        top: 50,
+        top: 55,
         right: 16,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         borderRadius: 25,

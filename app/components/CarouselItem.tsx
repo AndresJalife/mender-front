@@ -15,16 +15,18 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
             <View style={styles.headerContainer}>
                 <Text style={styles.title}>{data.entity?.title}</Text>
                 <Text style={styles.director}>{data.entity?.director}</Text>
+                <View style={styles.headerDivider} />
             </View>
             <VideoPlayer 
                 url={data.entity?.link} 
                 activeItem={activeItem}
                 isHomeTab={isHomeTab}
             />
+            <View style={styles.videoDivider} />
             <View style={styles.contentContainer}>
                 {/* Rating and Year */}
                 <View style={styles.ratingContainer}>
-                    <Text style={styles.rating}>⭐ {data.entity?.rating || 'N/A'}</Text>
+                    <Text style={styles.rating}>☆ {data.entity?.rating || 'N/A'}</Text>
                     <Text style={styles.year}>{data.entity?.year}</Text>
                 </View>
 
@@ -34,6 +36,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                         <Text key={index} style={styles.genreTag}>{genre}</Text>
                     ))}
                 </View>
+                <View style={styles.genreDivider} />
 
                 {/* Description */}
                 <Text style={styles.description}>{data.entity?.overview}</Text>
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     rating: {
-        color: '#ffd700',
+        color: '#ffffff',
         marginRight: 12,
         fontSize: 16,
     },
@@ -126,6 +129,20 @@ const styles = StyleSheet.create({
         color: '#888888',
         fontSize: 14,
         marginBottom: 4,
+    },
+    headerDivider: {
+        height: 1,
+        backgroundColor: '#333333',
+        marginTop: 12,
+    },
+    videoDivider: {
+        height: 1,
+        backgroundColor: '#333333',
+    },
+    genreDivider: {
+        height: 1,
+        backgroundColor: '#333333',
+        marginBottom: 16,
     },
 });
 
