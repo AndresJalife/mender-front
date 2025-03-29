@@ -43,6 +43,8 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
                 onIndexChange={setIndex}
                 renderScene={renderScene}
                 barStyle={styles.navigationBar}
+                activeColor="#625e5e"
+                inactiveColor="#9E9E9E"
             />
         </View>
     );
@@ -51,9 +53,12 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
+        backgroundColor: 'white',
     },
     navigationBar: {
         height: 70,
+        marginBottom: 10,
+        backgroundColor: '#1A1A1A',
     },
 });
 

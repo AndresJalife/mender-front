@@ -70,6 +70,9 @@ const ChatScreen = () => {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
         >
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Mender Bot</Text>
+            </View>
             <FlatList
                 data={messages}
                 renderItem={renderMessage}
@@ -105,6 +108,18 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f5f5f5',
     },
+    header: {
+        backgroundColor: '#fff',
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        alignItems: 'center',
+    },
+    headerText: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#333',
+    },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -125,7 +140,7 @@ const styles = StyleSheet.create({
     },
     userMessage: {
         alignSelf: 'flex-end',
-        backgroundColor: '#2196f3',
+        backgroundColor: '#cacaca',
     },
     messageText: {
         fontSize: 16,
@@ -149,7 +164,7 @@ const styles = StyleSheet.create({
         maxHeight: 100,
     },
     sendButton: {
-        backgroundColor: '#2196f3',
+        backgroundColor: '#cacaca',
         borderRadius: 20,
         paddingHorizontal: 20,
         justifyContent: 'center',

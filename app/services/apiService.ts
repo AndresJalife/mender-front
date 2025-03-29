@@ -2,7 +2,7 @@ import { store } from '../store/store';
 import { loginService } from './loginService';
 const API_BASE_URL = 'http://143.244.190.174:8443';
 
-export const getAuthenticatedRequest = async (endpoint: string, options: RequestInit = {}) => {
+export const getAuthenticatedRequest = async (endpoint: string, options: RequestInit = {}): Promise<Response | undefined> => {
     const state = store.getState();
     const token = state.auth.token;
 
@@ -45,7 +45,6 @@ export const getAuthenticatedRequest = async (endpoint: string, options: Request
         // try again
         return await getAuthenticatedRequest(endpoint, options);
     }
-
 
     return response;
 };
