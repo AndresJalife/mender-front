@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {WebView} from 'react-native-webview';
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 interface Props {
     url: string | undefined,
@@ -10,29 +10,31 @@ interface Props {
 
 const VideoPlayer: React.FC<Props> = ({url, activeItem, isHomeTab}) => {
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
 
     useEffect(() => {
-        setIsPlaying(isHomeTab && activeItem === url);
+        if (isHomeTab && activeItem === url) {
+            setIsPlaying(true);
+        } else {
+            setIsPlaying(false);
+        }
     }, [activeItem, url, isHomeTab]);
 
     return (
         <View style={styles.container}>
-            <WebView
-                style={styles.webView}
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-                source={{ 
-                    uri: "https://www.youtube.com/embed/" + url + "?autoplay=" + (isPlaying ? "1" : "0") + "&mute=0&playsinline=1&showinfo=0&controls=0&rel=0" 
-                }}
-                startInLoadingState={true}
-                allowsInlineMediaPlayback={true}
-                mediaPlaybackRequiresUserAction={false}
-                allowsFullscreenVideo={false}
-                allowsFullscreenVideoWithCustomVideoPlayer={false}
-                allowsPictureInPictureMediaPlayback={false}
-                allowsBackForwardNavigationGestures={false}
-                setSupportMultipleWindows={false}
-            />
+            <View style={styles.playerContainer}>
+                <YoutubePlayer
+                    height={218}
+                    play={isPlaying}
+                    videoId={url} // Extract video ID from URL
+                    onChangeState={state => {
+                        if (state === 'ended') {
+                            setIsPlaying(false);
+                        }
+                    }}
+                    mute={isMuted}
+                />
+            </View>
         </View>
     );
 };
@@ -42,9 +44,10 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 218,  // Match the height we had before
     },
-    webView: {
+    playerContainer: {
         width: '100%',
         height: '100%',
+        pointerEvents: 'box-none', // Disable touch events on the player container
     },
 });
 
