@@ -5,13 +5,18 @@ import { Post } from "@/app/types/Post";
 
 interface Props {
     data: Post;
-    activeItem?: string
+    activeItem?: string;
+    isHomeTab: boolean;
 }
 
-const Item: React.FC<Props> = ({data, activeItem}) => {
+const Item: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
     return (
         <View style={styles.container}>
-            <VideoPlayer url={data.entity?.link} activeItem={activeItem}/>
+            <VideoPlayer 
+                url={data.entity?.link} 
+                activeItem={activeItem}
+                isHomeTab={isHomeTab}
+            />
             <View style={styles.contentContainer}>
                 <Text style={styles.title}>{data.entity?.title}</Text>
                 <Text style={styles.director}>{data.entity?.director}</Text>

@@ -5,36 +5,37 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 
 interface Props {
     url: string | undefined,
-    activeItem?: string | undefined
+    activeItem?: string | undefined,
+    isHomeTab: boolean
 }
 
-const VideoPlayer: React.FC<Props> = ({url, activeItem}) => {
+const VideoPlayer: React.FC<Props> = ({url, activeItem, isHomeTab}) => {
     const [isPlaying, setIsPlaying] = useState(false);
 
-    // Play video when it becomes active
     useEffect(() => {
-        if (activeItem === url) {
-            setIsPlaying(true);  // ✅ Start video
-        } else {
-            setIsPlaying(false); // ✅ Pause when out of view
-        }
-    }, [activeItem, url]);
+        // Only play if we're on home tab AND this is the active item
+        setIsPlaying(isHomeTab && activeItem === url);
+    }, [activeItem, url, isHomeTab]);
 
     return (
         <View style={styles.container}>
-            {/*<WebView*/}
-            {/*    style={styles.webView}*/}
-            {/*    javaScriptEnabled={true}*/}
-            {/*    domStorageEnabled={true}*/}
-            {/*    source={{ uri: url + "?autoplay=1&mute=0&playsinline=1&showinfo=0&controls=0&rel=0" }}*/}
-            {/*    startInLoadingState={true}*/}
-            {/*    allowsInlineMediaPlayback={false}*/}
-            {/*    mediaPlaybackRequiresUserAction={false}*/}
-            {/*/>*/}
             <YoutubePlayer
                 height={218}
                 play={isPlaying}
                 videoId={url}
+                initialPlayerParams={{
+                    controls: false,
+                    preventFullScreen: true,
+                    modestbranding: true,
+                }}
+                webViewProps={{
+                    androidLayerType: 'hardware',
+                }}
+                onReady={() => {
+                    if (isHomeTab && activeItem === url) {
+                        setIsPlaying(true);
+                    }
+                }}
             />
         </View>
     );

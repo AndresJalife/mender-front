@@ -12,19 +12,19 @@ interface BottomNavigationProps {
 }
 
 const BottomNavigation = ({ data }: BottomNavigationProps) => {
-    const [index, setIndex] = useState(0);
-
     const [routes] = useState([
         { key: 'home', title: 'Home', focusedIcon: 'home' },
         { key: 'search', title: 'Search', focusedIcon: 'magnify' },
         { key: 'chat', title: 'Chat', focusedIcon: 'comment' },
         { key: 'profile', title: 'Profile', focusedIcon: 'account' },
     ]);
+    const [index, setIndex] = useState(0);
+    const currentTab = routes[index].key;
 
     const renderScene = ({ route }: { route: { key: string } }) => {
         switch (route.key) {
             case 'home':
-                return <Carousel items={data || []} />;
+                return <Carousel items={data || []} currentTab={currentTab} />;
             case 'search':
                 return <SearchScreen />;
             case 'chat':

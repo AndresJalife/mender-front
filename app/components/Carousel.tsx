@@ -7,9 +7,10 @@ import { Post } from "@/app/types/Post";
 
 interface IndexProps {
     items: Post[];
+    currentTab: string;
 }
 
-const Carousel: React.FC<IndexProps> = ({items}) => {
+const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
 
     const [activeItem, setActiveItem] = useState("");
 
@@ -29,7 +30,11 @@ const Carousel: React.FC<IndexProps> = ({items}) => {
                 onSnapToItem={onNext}
                 data={items}
                 renderItem={({ index }: { index: number }) => (
-                    <Item data={items[index]} activeItem={activeItem} />
+                    <Item 
+                        data={items[index]} 
+                        activeItem={activeItem}
+                        isHomeTab={currentTab === 'home'} 
+                    />
                 )}
             />
         </View>
