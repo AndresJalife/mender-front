@@ -4,6 +4,7 @@ import VideoPlayer from "@/app/components/VideoPlayer";
 import { Post } from "@/app/types/Post";
 import { Ionicons } from '@expo/vector-icons';
 import { postService } from '@/app/services/postService';
+import CommentsModal from './CommentsModal';
 
 interface Props {
     data: Post;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
+    const [showComments, setShowComments] = React.useState(false);
+
     const handleLike = async () => {
         if (data.post_id) {
             try {
@@ -49,13 +52,26 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
             <View style={styles.videoDivider} />
             <View style={styles.actionButtons}>
                 <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-                    <Ionicons name="heart-outline" size={24} color="#ffffff" />
-                    <Text style={styles.actionButtonText}>{data.likes || 0}</Text>
+                    <Ionicons 
+                        name={data.liked ? "heart" : "heart-outline"} 
+                        size={24} 
+                        color={data.liked ? "#ff4d4d" : "#ffffff"} 
+                    />
+                    <Text style={[styles.actionButtonText, data.liked && styles.likedText]}>
+                        {data.likes || 0}
+                    </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={handleSeen}>
-                    <Ionicons name="eye-outline" size={24} color="#ffffff" />
+                    <Ionicons 
+                        name={data.seen ? "eye" : "eye-outline"} 
+                        size={24} 
+                        color={data.seen ? "#4dff4d" : "#ffffff"} 
+                    />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity 
+                    style={styles.actionButton} 
+                    onPress={() => setShowComments(true)}
+                >
                     <Ionicons name="chatbubble-outline" size={24} color="#ffffff" />
                     <Text style={styles.actionButtonText}>{data.comments || 0}</Text>
                 </TouchableOpacity>
@@ -90,6 +106,14 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                     )} */}
                 </View>
             </View>
+
+            {data.post_id && (
+                <CommentsModal
+                    postId={data.post_id}
+                    visible={showComments}
+                    onClose={() => setShowComments(false)}
+                />
+            )}
         </View>
     );
 };
@@ -200,6 +224,9 @@ const styles = StyleSheet.create({
     actionButtonText: {
         color: '#ffffff',
         fontSize: 14,
+    },
+    likedText: {
+        color: '#ff4d4d',
     },
 });
 

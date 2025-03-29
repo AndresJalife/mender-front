@@ -1,10 +1,8 @@
+import User from '@/app/types/User';
+
 export interface RootState {
     auth: {
-        user: {
-            id: number;
-            email: string;
-            name: string;
-        } | null;
+        user: User | null;
         token: string | null;
         isAuthenticated: boolean;
     };
