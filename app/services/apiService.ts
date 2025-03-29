@@ -6,6 +6,8 @@ export const getAuthenticatedRequest = async (endpoint: string, options: Request
     const state = store.getState();
     const token = state.auth.token;
 
+    console.log('endpoint', endpoint);
+
     const login = async () => {
         const success = await loginService.login({ 
             email: state.auth.user?.email || '', 
@@ -48,3 +50,5 @@ export const getAuthenticatedRequest = async (endpoint: string, options: Request
 
     return response;
 };
+
+export default getAuthenticatedRequest;

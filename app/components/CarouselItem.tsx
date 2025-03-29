@@ -9,7 +9,7 @@ interface Props {
     isHomeTab: boolean;
 }
 
-const Item: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
+const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -127,4 +127,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Item;
+export default CarouselItem;

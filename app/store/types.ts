@@ -9,3 +9,4 @@ export interface RootState {
         isAuthenticated: boolean;
     };
 } 
+export default RootState;

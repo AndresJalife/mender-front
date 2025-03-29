@@ -10,7 +10,7 @@ export const postService = {
             if (!response?.ok) {
                 throw new Error('Failed to fetch messages');
             }
-                        
+
             const data = await response.json();
             return data as Post[];
         } catch (error) {
@@ -19,3 +19,5 @@ export const postService = {
         }
     }
 }; 
+
+export default postService;

@@ -14,14 +14,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ios.menderfront"
+      "bundleIdentifier": "com.ios.menderfront",
+      "suppressRuntimeWarnings": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.andriod.menderfront"
+      "package": "com.andriod.menderfront",
+      "suppressRuntimeWarnings": true
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +35,8 @@
       "expo-font"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "tsconfigPaths": true
     }
   }
 }

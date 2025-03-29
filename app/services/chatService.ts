@@ -27,7 +27,7 @@ export const chatService = {
                 method: 'POST',
                 body: JSON.stringify({ message }),
             });
-            
+
             if (!response?.ok) {
                 throw new Error('Failed to send message');
             }
@@ -37,3 +37,5 @@ export const chatService = {
         }
     },
 }; 
+
+export default chatService;

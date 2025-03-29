@@ -19,3 +19,5 @@ export interface Post {
     comments?: number;
     created_date?: string;
 } 
+
+export default Post;

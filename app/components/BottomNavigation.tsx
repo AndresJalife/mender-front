@@ -6,26 +6,23 @@ import ChatScreen from "@/app/screens/ChatScreen";
 import { ProfileScreen } from "@/app/screens/ProfileScreen";
 import SearchScreen from "@/app/screens/SearchScreen";
 import { Post } from "@/app/types/Post";
+import FeedScreen from '../screens/FeedScreen';
 
-interface BottomNavigationProps {
-    data?: Post[];
-}
-
-const BottomNavigation = ({ data }: BottomNavigationProps) => {
+const BottomNavigation = () => {
     const [routes] = useState([
         { key: 'home', title: 'Home', focusedIcon: 'home' },
         { key: 'search', title: 'Search', focusedIcon: 'magnify' },
         { key: 'chat', title: 'Chat', focusedIcon: 'comment' },
         { key: 'profile', title: 'Profile', focusedIcon: 'account' },
     ]);
-    
+
     const [index, setIndex] = useState(0);
     const currentTab = routes[index].key;
 
     const renderScene = ({ route }: { route: { key: string } }) => {
         switch (route.key) {
             case 'home':
-                return <Carousel items={data || []} currentTab={currentTab} />;
+                return <FeedScreen currentTab={currentTab} />;
             case 'search':
                 return <SearchScreen />;
             case 'chat':
@@ -58,6 +55,7 @@ const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
         backgroundColor: 'white',
+        width: "100%",
     },
     navigationBar: {
         height: 80,

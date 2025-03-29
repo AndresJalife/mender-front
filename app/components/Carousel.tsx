@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, LogBox} from 'react-native';
 import CarouselComp from 'react-native-reanimated-carousel';
-import Item from "@/app/components/Item";
-import {useState} from "react";
+import CarouselItem from "@/app/components/CarouselItem";
+import {useCallback, useEffect, useState} from "react";
 import { Post } from "@/app/types/Post";
 
 interface IndexProps {
@@ -10,15 +10,17 @@ interface IndexProps {
     currentTab: string;
 }
 
-const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
+LogBox.ignoreLogs(['[react-native-reanimated]']);
 
+const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
     const [activeItem, setActiveItem] = useState("");
 
-    const onNext = (index: number) => {
+    const onNext = useCallback((index: number) => {
+        'worklet';
         requestAnimationFrame(() => {
             setActiveItem(items[index]?.entity?.link ?? "");
         });
-    };
+    }, [items]);
 
     return (
         <View style={styles.carouselContainer} pointerEvents="box-none">
@@ -30,12 +32,13 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
                 onSnapToItem={onNext}
                 data={items}
                 renderItem={({ index }: { index: number }) => (
-                    <Item 
+                    <CarouselItem 
                         data={items[index]} 
                         activeItem={activeItem}
                         isHomeTab={currentTab === 'home'} 
                     />
                 )}
+                defaultIndex={0}
             />
         </View>
     );
@@ -43,7 +46,7 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
 
 const styles = StyleSheet.create({
     carouselContainer: {
-        flex: 1, // ✅ Makes Carousel take full height
+        flex: 1,
         zIndex: 1
     },
 });

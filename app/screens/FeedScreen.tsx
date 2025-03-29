@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import BottomNavigation from "@/app/components/BottomNavigation";
 import { Post } from '@/app/types/Post';
 import { postService } from '../services/postService';
+import Carousel from '../components/Carousel';
 
 
-const HomeScreen = () => {
+const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const HomeScreen = () => {
 
     return (
         <View style={styles.container}>
-            <BottomNavigation data={posts} />
+            <Carousel items={posts || []} currentTab={currentTab} />
         </View>
     );
 };
@@ -35,5 +35,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HomeScreen;
+export default FeedScreen;
 

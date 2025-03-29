@@ -18,3 +18,5 @@ export const colors = {
     danger: '#d32f2f',
     dangerBg: '#ffebee'
 }; 
+
+export default colors;

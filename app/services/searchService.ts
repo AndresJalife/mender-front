@@ -18,3 +18,5 @@ export const searchService = {
         return data;
     }
 }; 
+
+export default searchService;
