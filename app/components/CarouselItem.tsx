@@ -5,6 +5,7 @@ import { Post } from "@/app/types/Post";
 import { Ionicons } from '@expo/vector-icons';
 import { postService } from '@/app/services/postService';
 import CommentsModal from './CommentsModal';
+import { router } from 'expo-router';
 
 interface Props {
     data: Post;
@@ -34,6 +35,12 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
             } catch (error) {
                 console.error('Error marking post as seen:', error);
             }
+        }
+    };
+
+    const handleViewDetails = () => {
+        if (data.post_id) {
+            router.push(`/screens/ItemScreen?id=${data.post_id}`);
         }
     };
 
@@ -81,10 +88,19 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
             </View>
             <View style={styles.videoDivider} />
             <View style={styles.contentContainer}>
-                {/* Rating and Year */}
-                <View style={styles.ratingContainer}>
-                    <Text style={styles.rating}>☆ {data.entity?.rating || 'N/A'}</Text>
-                    <Text style={styles.year}>{data.entity?.year}</Text>
+                {/* Rating and Year with View Details Button */}
+                <View style={styles.ratingRow}>
+                    <View style={styles.ratingContainer}>
+                        <Text style={styles.rating}>☆ {data.entity?.rating || 'N/A'}</Text>
+                        <Text style={styles.year}>{data.entity?.year}</Text>
+                    </View>
+                    <TouchableOpacity 
+                        style={styles.viewDetailsButton}
+                        onPress={handleViewDetails}
+                    >
+                        <Ionicons name="chevron-forward" size={20} color="#ffffff" />
+                        <Text style={styles.viewDetailsText}>View Details</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Genre Tags */}
@@ -151,10 +167,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 4,
     },
+    ratingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 12,
     },
     rating: {
         color: '#ffffff',
@@ -227,6 +248,19 @@ const styles = StyleSheet.create({
     },
     likedText: {
         color: '#ff4d4d',
+    },
+    viewDetailsButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#333333',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 16,
+        gap: 4,
+    },
+    viewDetailsText: {
+        color: '#ffffff',
+        fontSize: 14,
     },
 });
 

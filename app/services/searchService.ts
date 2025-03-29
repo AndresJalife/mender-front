@@ -1,12 +1,6 @@
 import Post from '../types/Post';
 import { getAuthenticatedRequest } from './apiService';
 
-// export interface SearchResult {
-//     id: number;
-//     title: string;
-//     description: string;
-//     thumbnail?: string;
-// }
 
 export const searchService = {
     search: async (query: string): Promise<Post[]> => {
@@ -17,7 +11,6 @@ export const searchService = {
         
         const data = await response.json();
 
-        console.log(data);
         return data;
     }
 }; 
