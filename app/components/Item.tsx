@@ -14,6 +14,7 @@ const Item: React.FC<Props> = ({data, activeItem}) => {
             <VideoPlayer url={data.entity?.link} activeItem={activeItem}/>
             <View style={styles.contentContainer}>
                 <Text style={styles.title}>{data.entity?.title}</Text>
+                <Text style={styles.director}>{data.entity?.director}</Text>
                 
                 {/* Rating and Year */}
                 <View style={styles.ratingContainer}>
@@ -33,11 +34,10 @@ const Item: React.FC<Props> = ({data, activeItem}) => {
 
                 {/* Additional Info */}
                 <View style={styles.infoContainer}>
-                    <Text style={styles.infoText}>Duration: {data.entity?.duration}</Text>
+                    {/* <Text style={styles.infoText}>Duration: {data.entity?.duration}</Text>
                     {data.entity_type === 's' && (
                         <Text style={styles.infoText}>Seasons: {data.entity?.seasons}</Text>
-                    )}
-                    <Text style={styles.infoText}>Director: {data.entity?.director}</Text>
+                    )} */}
                 </View>
             </View>
         </View>
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         backgroundColor: '#1a1a1a',
         padding: 16,
-        paddingTop: 0,
+        paddingTop: 16,
         paddingBottom: 0,
         flex: 1,
         height: '90%',
@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ffffff',
         marginBottom: 8,
+    },
+    director: {
+        color: '#888888',
+        fontSize: 16,
+        marginBottom: 12,
     },
     ratingContainer: {
         flexDirection: 'row',
