@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { loginService } from "../services/loginService";
 import { Link } from "expo-router";
+import { colors } from "../constants/colors";
 
 export default function LoginScreen() {
     const [email, setEmail] = React.useState("");
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
     },
     content: {
         flex: 1,
@@ -118,15 +119,15 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: "bold",
-        color: "#333",
+        color: colors.textPrimary,
         marginBottom: 8,
     },
     subtitle: {
         fontSize: 16,
-        color: "#666",
+        color: colors.textSecondary,
     },
     form: {
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface,
         padding: 20,
         borderRadius: 12,
         shadowColor: "#000",
@@ -143,20 +144,21 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        color: "#666",
+        color: colors.textSecondary,
         marginBottom: 8,
     },
     input: {
         height: 50,
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: colors.border,
         borderRadius: 8,
         paddingHorizontal: 16,
         fontSize: 16,
-        backgroundColor: "#f9f9f9",
+        backgroundColor: colors.surfaceLight,
+        color: colors.textPrimary,
     },
     button: {
-        backgroundColor: "#007AFF",
+        backgroundColor: colors.surfaceLighter,
         height: 50,
         borderRadius: 8,
         justifyContent: "center",
@@ -164,15 +166,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     buttonDisabled: {
-        backgroundColor: "#999",
+        backgroundColor: colors.textMuted,
     },
     buttonText: {
-        color: "#fff",
+        color: colors.textPrimary,
         fontSize: 16,
         fontWeight: "600",
     },
     errorText: {
-        color: "#ff3b30",
+        color: colors.error,
         fontSize: 14,
         marginTop: 8,
         textAlign: "center",
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     signupButtonText: {
-        color: "#007AFF",
+        color: colors.textPrimary,
         fontSize: 16,
         fontWeight: "500",
     },

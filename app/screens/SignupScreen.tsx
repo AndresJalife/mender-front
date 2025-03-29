@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { loginService } from "../services/loginService";
+import { colors } from "../constants/colors";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SignupScreen() {
     const [email, setEmail] = React.useState("");
@@ -76,6 +78,12 @@ export default function SignupScreen() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.container}
         >
+            <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+            >
+                <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+            </TouchableOpacity>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Create Account</Text>
@@ -249,7 +257,14 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
+    },
+    backButton: {
+        position: 'absolute',
+        top: 50,
+        left: 20,
+        zIndex: 1,
+        padding: 10,
     },
     content: {
         padding: 20,
@@ -261,15 +276,16 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: "bold",
-        color: "#333",
+        color: colors.textPrimary,
         marginBottom: 8,
+        paddingTop: 20,
     },
     subtitle: {
         fontSize: 16,
-        color: "#666",
+        color: colors.textSecondary,
     },
     form: {
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface,
         padding: 20,
         borderRadius: 12,
         shadowColor: "#000",
@@ -286,30 +302,31 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        color: "#666",
+        color: colors.textSecondary,
         marginBottom: 8,
     },
     input: {
         height: 50,
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: colors.border,
         borderRadius: 8,
         paddingHorizontal: 16,
         fontSize: 16,
-        backgroundColor: "#f9f9f9",
+        backgroundColor: colors.surfaceLight,
+        color: colors.textPrimary,
     },
     dropdownButton: {
         height: 50,
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: colors.border,
         borderRadius: 8,
         paddingHorizontal: 16,
         justifyContent: "center",
-        backgroundColor: "#f9f9f9",
+        backgroundColor: colors.surfaceLight,
     },
     dropdownButtonText: {
         fontSize: 16,
-        color: "#333",
+        color: colors.textPrimary,
     },
     modalOverlay: {
         flex: 1,
@@ -317,7 +334,7 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     modalContent: {
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
@@ -332,30 +349,30 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#333",
+        color: colors.textPrimary,
     },
     modalCloseButton: {
         fontSize: 16,
-        color: "#007AFF",
+        color: colors.textPrimary,
     },
     modalItem: {
         paddingVertical: 15,
         borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        borderBottomColor: colors.border,
     },
     modalItemSelected: {
-        backgroundColor: "#f0f0f0",
+        backgroundColor: colors.surfaceLight,
     },
     modalItemText: {
         fontSize: 16,
-        color: "#333",
+        color: colors.textPrimary,
     },
     modalItemTextSelected: {
-        color: "#007AFF",
+        color: colors.textPrimary,
         fontWeight: "600",
     },
     button: {
-        backgroundColor: "#007AFF",
+        backgroundColor: colors.surfaceLighter,
         height: 50,
         borderRadius: 8,
         justifyContent: "center",
@@ -363,15 +380,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     buttonDisabled: {
-        backgroundColor: "#999",
+        backgroundColor: colors.textMuted,
     },
     buttonText: {
-        color: "#fff",
+        color: colors.textPrimary,
         fontSize: 16,
         fontWeight: "600",
     },
     errorText: {
-        color: "#ff3b30",
+        color: colors.error,
         fontSize: 14,
         marginTop: 8,
         textAlign: "center",
