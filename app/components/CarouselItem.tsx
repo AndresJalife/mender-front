@@ -85,29 +85,26 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                 <TouchableOpacity style={styles.actionButton}>
                     <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
                 </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={handleViewDetails}
+                >
+                    <Ionicons name="information-circle-outline" size={24} color="#ffffff" />
+                </TouchableOpacity>
             </View>
             <View style={styles.videoDivider} />
             <View style={styles.contentContainer}>
-                {/* Rating and Year with View Details Button */}
+                {/* Rating, Year, and Genres */}
                 <View style={styles.ratingRow}>
                     <View style={styles.ratingContainer}>
                         <Text style={styles.rating}>☆ {data.entity?.rating || 'N/A'}</Text>
                         <Text style={styles.year}>{data.entity?.year}</Text>
                     </View>
-                    <TouchableOpacity 
-                        style={styles.viewDetailsButton}
-                        onPress={handleViewDetails}
-                    >
-                        <Ionicons name="chevron-forward" size={20} color="#ffffff" />
-                        <Text style={styles.viewDetailsText}>View Details</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Genre Tags */}
-                <View style={styles.genreContainer}>
-                    {data.entity?.genres?.map((genre, index) => (
-                        <Text key={index} style={styles.genreTag}>{genre}</Text>
-                    ))}
+                    <View style={styles.genreContainer}>
+                        {data.entity?.genres?.map((genre, index) => (
+                            <Text key={index} style={styles.genreTag}>{genre}</Text>
+                        ))}
+                    </View>
                 </View>
                 <View style={styles.genreDivider} />
 
@@ -189,16 +186,20 @@ const styles = StyleSheet.create({
     genreContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginBottom: 12,
+        justifyContent: 'flex-end',
+        flex: 1,
+        marginLeft: 12,
+        alignItems: 'center',
     },
     genreTag: {
         backgroundColor: '#333333',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        marginRight: 8,
-        marginBottom: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        marginLeft: 6,
+        marginBottom: 4,
         color: '#ffffff',
+        fontSize: 16,
     },
     description: {
         color: '#ffffff',
