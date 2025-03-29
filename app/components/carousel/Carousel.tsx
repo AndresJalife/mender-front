@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {Dimensions, StyleSheet, Text, View, LogBox} from 'react-native';
 import CarouselComp from 'react-native-reanimated-carousel';
-import CarouselItem from "@/app/components/CarouselItem";
-import {useCallback, useEffect, useState} from "react";
+import CarouselItem from './CarouselItem'; // Updated import path
+import {useCallback, useState} from "react"; // Removed unused imports
 import { Post } from "@/app/types/Post";
 
 interface IndexProps {
     items: Post[];
-    currentTab: string;
+    currentTab: string; 
 }
 
 LogBox.ignoreLogs(['[react-native-reanimated]']);

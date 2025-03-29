@@ -1,10 +1,10 @@
 import * as React from "react";
 import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
-import VideoPlayer from "@/app/components/VideoPlayer";
+import VideoPlayer from "@/app/components/carousel/VideoPlayer";
 import { Post } from "@/app/types/Post";
 import { Ionicons } from '@expo/vector-icons';
 import { postService } from '@/app/services/postService';
-import CommentsModal from './CommentsModal';
+import CommentsModal from '../CommentsModal';
 import { router } from 'expo-router';
 
 interface Props {

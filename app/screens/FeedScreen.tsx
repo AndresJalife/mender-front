@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Post } from '@/app/types/Post';
 import { postService } from '../services/postService';
-import Carousel from '../components/Carousel';
+import Carousel from '../components/carousel/Carousel';
 import { router } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';

@@ -1,7 +1,7 @@
 import { BottomNavigation as BottomNavigationComp, Text } from 'react-native-paper';
 import React, { useState } from 'react';
 import { View, StyleSheet, LogBox } from 'react-native';
-import Carousel from "@/app/components/Carousel";
+import Carousel from "@/app/components/carousel/Carousel";
 import ChatScreen from "@/app/screens/ChatScreen";
 import { ProfileScreen } from "@/app/screens/ProfileScreen";
 import SearchScreen from "@/app/screens/SearchScreen";
