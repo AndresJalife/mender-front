@@ -22,7 +22,9 @@ export interface Post {
 
 export interface Filters {
     genre?: string;
-    year?: number;
+    yearFrom?: number;
+    yearTo?: number;
+    rating?: number;
 }
 
 export default Post;
