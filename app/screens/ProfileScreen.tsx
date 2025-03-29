@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { RootState } from '../store/types';
+import { RootState } from '../types/RootState';
 import { store } from '../store/store';
 import { logout } from '../store/auth';
 import { colors } from '../constants/colors';

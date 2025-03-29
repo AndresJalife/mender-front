@@ -1,7 +1,7 @@
 import {Text, View} from "react-native";
 import {useSelector} from 'react-redux';
 import Login from "../screens/LoginScreen";
-import { RootState } from "../store/types";
+import { RootState } from "../types/RootState";
 import BottomNavigation from "../components/BottomNavigation";
 
 export function MainScreen() {
