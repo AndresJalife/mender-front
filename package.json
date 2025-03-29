@@ -19,6 +19,7 @@
     "@react-native-firebase/app": "^21.0.0",
     "@react-native-firebase/auth": "^21.0.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "@types/lodash": "^4.17.16",
     "expo": "^52.0.39",
     "expo-constants": "~17.0.8",
     "expo-dev-client": "~5.0.14",
