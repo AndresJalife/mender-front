@@ -5,9 +5,9 @@ import Carousel from "@/app/components/Carousel";
 import ChatScreen from "@/app/screens/ChatScreen";
 import { ProfileScreen } from "@/app/screens/ProfileScreen";
 import SearchScreen from "@/app/screens/SearchScreen";
-
+import { Post } from "@/app/types/Post";
 interface BottomNavigationProps {
-    data?: any[];
+    data?: Post[];
 }
 
 const BottomNavigation = ({ data }: BottomNavigationProps) => {

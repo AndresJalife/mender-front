@@ -1,17 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import BottomNavigation from "@/app/components/BottomNavigation";
+import { Post } from '@/app/types/Post';
+import { postService } from '../services/postService';
 
-
-const data = [
-    {"text": "Item 2", "url": "lbGugemmozk"},
-    {"text": "Item 1", "url": "9kqnsoY94L8"},
-]
 
 const HomeScreen = () => {
+    const [posts, setPosts] = useState<Post[]>([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await postService.getPosts();
+                setPosts(response);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
     return (
         <View style={styles.container}>
-            <BottomNavigation data={data} />
+            <BottomNavigation data={posts} />
         </View>
     );
 };

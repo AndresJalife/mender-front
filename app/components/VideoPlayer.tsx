@@ -4,7 +4,7 @@ import {WebView} from 'react-native-webview';
 import YoutubePlayer from 'react-native-youtube-iframe';
 
 interface Props {
-    url: string,
+    url: string | undefined,
     activeItem?: string | undefined
 }
 

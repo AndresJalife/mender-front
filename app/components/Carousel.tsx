@@ -3,9 +3,10 @@ import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import CarouselComp from 'react-native-reanimated-carousel';
 import Item from "@/app/components/Item";
 import {useState} from "react";
+import { Post } from "@/app/types/Post";
 
 interface IndexProps {
-    items: any[];
+    items: Post[];
 }
 
 const Carousel: React.FC<IndexProps> = ({items}) => {
@@ -14,7 +15,7 @@ const Carousel: React.FC<IndexProps> = ({items}) => {
 
     const onNext = (index: number) => {
         requestAnimationFrame(() => {
-            setActiveItem(items[index]?.url ?? "");
+            setActiveItem(items[index]?.entity?.link ?? "");
         });
     };
 

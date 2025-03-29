@@ -10,10 +10,11 @@ export const chatService = {
     getMessages: async (): Promise<Message[]> => {
         try {
             const response = await getAuthenticatedRequest('/chat/');
-            if (!response.ok) {
+
+            if (!response?.ok) {
                 throw new Error('Failed to fetch messages');
             }
-            return await response.json();
+            return await response?.json();
         } catch (error) {
             console.error('Error fetching messages:', error);
             throw error;
@@ -26,7 +27,8 @@ export const chatService = {
                 method: 'POST',
                 body: JSON.stringify({ message }),
             });
-            if (!response.ok) {
+            
+            if (!response?.ok) {
                 throw new Error('Failed to send message');
             }
         } catch (error) {
