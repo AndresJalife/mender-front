@@ -11,6 +11,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import { chatService, Message } from '../services/chatService';
+import { colors } from '../constants/colors';
 
 const ChatScreen = () => {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -60,7 +61,7 @@ const ChatScreen = () => {
     if (isLoading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color={colors.textPrimary} />
             </View>
         );
     }
@@ -88,7 +89,7 @@ const ChatScreen = () => {
                     value={newMessage}
                     onChangeText={setNewMessage}
                     placeholder="Type a message..."
-                    placeholderTextColor="#666"
+                    placeholderTextColor={colors.textMuted}
                     multiline
                 />
                 <TouchableOpacity 
@@ -106,25 +107,26 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
     },
     header: {
-        backgroundColor: '#fff',
+        backgroundColor: colors.surface,
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: colors.border,
         alignItems: 'center',
-        paddingTop: 40,
+        paddingTop: 45,
     },
     headerText: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#333',
+        color: colors.textPrimary,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: colors.background,
     },
     messagesList: {
         padding: 16,
@@ -137,47 +139,50 @@ const styles = StyleSheet.create({
     },
     botMessage: {
         alignSelf: 'flex-start',
-        backgroundColor: '#e3f2fd',
+        backgroundColor: colors.surfaceLight,
     },
     userMessage: {
         alignSelf: 'flex-end',
-        backgroundColor: '#cacaca',
+        backgroundColor: colors.surfaceLighter,
     },
     messageText: {
         fontSize: 16,
-        color: '#333',
+        color: colors.textSecondary,
     },
     inputContainer: {
         flexDirection: 'row',
         padding: 16,
-        backgroundColor: '#fff',
+        paddingBottom: 10,
+        paddingTop: 10,
+        backgroundColor: colors.surface,
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
+        borderTopColor: colors.border,
     },
     input: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.surfaceLight,
         borderRadius: 20,
         paddingHorizontal: 16,
         paddingVertical: 8,
         marginRight: 8,
         fontSize: 16,
         maxHeight: 100,
+        color: colors.textPrimary,
     },
     sendButton: {
-        backgroundColor: '#cacaca',
+        backgroundColor: colors.surfaceLighter,
         borderRadius: 20,
         paddingHorizontal: 20,
         justifyContent: 'center',
         alignItems: 'center',
     },
     sendButtonText: {
-        color: '#fff',
+        color: colors.textPrimary,
         fontSize: 16,
         fontWeight: '600',
     },
     errorText: {
-        color: '#d32f2f',
+        color: colors.error,
         textAlign: 'center',
         padding: 8,
     },

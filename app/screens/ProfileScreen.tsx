@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { RootState } from '../store/types';
 import { store } from '../store/store';
 import { logout } from '../store/auth';
+import { colors } from '../constants/colors';
 
 export const ProfileScreen = () => {
     const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -55,32 +56,32 @@ export const ProfileScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
     },
     header: {
         padding: 20,
         paddingTop: 40,
-        backgroundColor: '#ffffff',
+        backgroundColor: colors.surface,
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: colors.border,
     },
     name: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#333333',
+        color: colors.textPrimary,
         marginBottom: 8,
     },
     email: {
         fontSize: 16,
-        color: '#666666',
+        color: colors.textSecondary,
     },
     buttonContainer: {
         padding: 20,
         gap: 12,
     },
     button: {
-        backgroundColor: '#ffffff',
+        backgroundColor: colors.surfaceLight,
         padding: 16,
         borderRadius: 12,
         alignItems: 'center',
@@ -95,19 +96,19 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontSize: 16,
-        color: '#333333',
+        color: colors.textPrimary,
         fontWeight: '600',
     },
     logoutButton: {
-        backgroundColor: '#ffebee',
+        backgroundColor: colors.surfaceLighter,
         marginTop: 8,
     },
     logoutText: {
-        color: '#d32f2f',
+        color: colors.error,
     },
     message: {
         fontSize: 16,
-        color: '#666666',
+        color: colors.textSecondary,
         textAlign: 'center',
         marginTop: 20,
     },
