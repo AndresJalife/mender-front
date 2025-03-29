@@ -32,7 +32,7 @@ const VideoPlayer: React.FC<Props> = ({url, activeItem}) => {
             {/*    mediaPlaybackRequiresUserAction={false}*/}
             {/*/>*/}
             <YoutubePlayer
-                height={300}
+                height={218}
                 play={isPlaying}
                 videoId={url}
             />
@@ -43,7 +43,6 @@ const VideoPlayer: React.FC<Props> = ({url, activeItem}) => {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        height: '50%',
     },
     webView: {
         flex: 1,

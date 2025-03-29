@@ -6,6 +6,7 @@ import ChatScreen from "@/app/screens/ChatScreen";
 import { ProfileScreen } from "@/app/screens/ProfileScreen";
 import SearchScreen from "@/app/screens/SearchScreen";
 import { Post } from "@/app/types/Post";
+
 interface BottomNavigationProps {
     data?: Post[];
 }
@@ -20,11 +21,10 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
         { key: 'profile', title: 'Profile', focusedIcon: 'account' },
     ]);
 
-    // @ts-ignore
-    const renderScene = ({ route }) => {
+    const renderScene = ({ route }: { route: { key: string } }) => {
         switch (route.key) {
             case 'home':
-                return <Carousel items={data} />;
+                return <Carousel items={data || []} />;
             case 'search':
                 return <SearchScreen />;
             case 'chat':
@@ -43,7 +43,6 @@ const BottomNavigation = ({ data }: BottomNavigationProps) => {
                 onIndexChange={setIndex}
                 renderScene={renderScene}
                 barStyle={styles.navigationBar}
-                style={{ paddingTop: 0 }}
                 activeColor="#cacaca"
                 inactiveColor="#625e5e"
                 activeIndicatorStyle={{ opacity: 0 }}

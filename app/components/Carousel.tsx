@@ -24,7 +24,7 @@ const Carousel: React.FC<IndexProps> = ({items}) => {
             <CarouselComp
                 width={Dimensions.get('window').width}
                 autoPlay={false}
-                height={Dimensions.get('window').height - 150}
+                height={Dimensions.get('window').height - 80}
                 vertical={true}
                 onSnapToItem={onNext}
                 data={items}
