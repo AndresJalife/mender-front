@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <Stack screenOptions={{ contentStyle: { paddingTop: 40, backgroundColor: 'black' }, headerShown: false }}>
+      <Stack screenOptions={{ contentStyle: { backgroundColor: 'black' }, headerShown: false }}>
         <Stack.Screen 
           name="screens/MainScreen" 
           options={{ 

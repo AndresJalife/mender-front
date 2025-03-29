@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     },
     header: {
         padding: 20,
+        paddingTop: 40,
         backgroundColor: '#ffffff',
         alignItems: 'center',
         borderBottomWidth: 1,
