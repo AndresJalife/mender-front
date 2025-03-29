@@ -22,6 +22,7 @@ interface LoginResponse {
     user_id: number;
     email: string;
     name: string;
+    username: string;
 }
 
 interface SignupResponse {
@@ -50,6 +51,7 @@ export const loginService = {
                         id: data.user_id, // You might want to get these from the API
                         email: data.email,
                         name: data.name,
+                        username: data.username,
                         password: credentials.password
                     }
                 }));
