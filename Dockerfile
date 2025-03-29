@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 19000 19001 19002
 
 # Start the Expo server in tunnel mode
-CMD ["expo", "start", "--tunnel"]
+CMD ["npx", "expo", "start", "--tunnel"]
