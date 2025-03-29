@@ -90,7 +90,10 @@ export default function FiltersScreen() {
                     style={styles.dropdownButton}
                     onPress={() => setShowGenrePicker(true)}
                 >
-                    <Text style={styles.dropdownButtonText}>
+                    <Text style={[
+                        styles.dropdownButtonText,
+                        localFilters.genre && { opacity: 1, fontWeight: '600' }
+                    ]}>
                         {genres.find(g => g.value === localFilters.genre)?.label || "Select Genre"}
                     </Text>
                 </TouchableOpacity>
@@ -103,7 +106,10 @@ export default function FiltersScreen() {
                         style={[styles.dropdownButton, styles.yearButton]}
                         onPress={() => setShowFromYearPicker(true)}
                     >
-                        <Text style={styles.dropdownButtonText}>
+                        <Text style={[
+                            styles.dropdownButtonText,
+                            localFilters.yearFrom && { opacity: 1, fontWeight: '600' }
+                        ]}>
                             {localFilters.yearFrom || "From"}
                         </Text>
                     </TouchableOpacity>
@@ -111,7 +117,10 @@ export default function FiltersScreen() {
                         style={[styles.dropdownButton, styles.yearButton]}
                         onPress={() => setShowToYearPicker(true)}
                     >
-                        <Text style={styles.dropdownButtonText}>
+                        <Text style={[
+                            styles.dropdownButtonText,
+                            localFilters.yearTo && { opacity: 1, fontWeight: '600' }
+                        ]}>
                             {localFilters.yearTo || "To"}
                         </Text>
                     </TouchableOpacity>
@@ -266,7 +275,10 @@ export default function FiltersScreen() {
                     style={styles.dropdownButton}
                     onPress={() => setShowRatingPicker(true)}
                 >
-                    <Text style={styles.dropdownButtonText}>
+                    <Text style={[
+                        styles.dropdownButtonText,
+                        localFilters.rating && { opacity: 1, fontWeight: '600' }
+                    ]}>
                         {localFilters.rating || "Select Rating"}
                     </Text>
                 </TouchableOpacity>
@@ -384,6 +396,7 @@ const styles = StyleSheet.create({
     dropdownButtonText: {
         fontSize: 15,
         color: colors.textPrimary,
+        opacity: 0.5,
     },
     modalContainer: {
         flex: 1,
