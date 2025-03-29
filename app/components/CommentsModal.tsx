@@ -82,9 +82,6 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
                                 <View style={styles.modalContent}>
                                     <View style={styles.header}>
                                         <Text style={styles.title}>Comments</Text>
-                                        <TouchableOpacity onPress={onClose}>
-                                            <Ionicons name="close" size={24} color="#ffffff" />
-                                        </TouchableOpacity>
                                     </View>
                                     
                                     {loading ? (
@@ -153,7 +150,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'transparent',
     },
     overlayTouchable: {
         flex: 1,
@@ -181,7 +178,7 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
