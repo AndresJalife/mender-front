@@ -10,7 +10,6 @@ interface Props {
 
 const VideoPlayer: React.FC<Props> = ({url, activeItem, isHomeTab}) => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
 
     useEffect(() => {
         if (isHomeTab && activeItem === url) {
@@ -32,7 +31,7 @@ const VideoPlayer: React.FC<Props> = ({url, activeItem, isHomeTab}) => {
                             setIsPlaying(false);
                         }
                     }}
-                    mute={isMuted}
+                    mute={true}
                 />
             </View>
         </View>
