@@ -56,6 +56,7 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
             const comment = await postService.createComment(postId, newComment.trim());
             setComments(prev => [comment, ...prev]);
             setNewComment('');
+            Keyboard.dismiss(); // Dismiss the keyboard after sending
         } catch (error) {
             console.error('Error creating comment:', error);
         } finally {
@@ -70,75 +71,77 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
             animationType="slide"
             onRequestClose={onClose}
         >
-            <TouchableWithoutFeedback onPress={onClose}>
-                <View style={styles.overlay}>
-                    <TouchableWithoutFeedback>
-                        <KeyboardAvoidingView 
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                            style={styles.modalContainer}
-                        >
-                            <View style={styles.modalContent}>
-                                <View style={styles.header}>
-                                    <Text style={styles.title}>Comments</Text>
-                                    <TouchableOpacity onPress={onClose}>
-                                        <Ionicons name="close" size={24} color="#ffffff" />
-                                    </TouchableOpacity>
-                                </View>
-                                
-                                {loading ? (
-                                    <ActivityIndicator size="large" color="#ffffff" style={styles.loader} />
-                                ) : comments.length === 0 ? (
-                                    <View style={styles.emptyContainer}>
-                                        <Text style={styles.emptyText}>Be the first one to comment!</Text>
+            <View style={styles.overlay}>
+                <TouchableWithoutFeedback onPress={onClose}>
+                    <View style={styles.overlayTouchable}>
+                        <TouchableWithoutFeedback>
+                            <KeyboardAvoidingView 
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                style={styles.modalContainer}
+                            >
+                                <View style={styles.modalContent}>
+                                    <View style={styles.header}>
+                                        <Text style={styles.title}>Comments</Text>
+                                        <TouchableOpacity onPress={onClose}>
+                                            <Ionicons name="close" size={24} color="#ffffff" />
+                                        </TouchableOpacity>
                                     </View>
-                                ) : (
-                                    <FlatList
-                                        data={comments}
-                                        keyExtractor={(item) => item.created_date}
-                                        renderItem={({ item }) => (
-                                            <View style={styles.commentItem}>
-                                                <View style={styles.commentHeader}>
-                                                    <View style={styles.commentContent}>
-                                                        <Text style={styles.username}>{item.user.username}</Text>
-                                                        <Text style={styles.commentText}>{item.comment}</Text>
+                                    
+                                    {loading ? (
+                                        <ActivityIndicator size="large" color="#ffffff" style={styles.loader} />
+                                    ) : comments.length === 0 ? (
+                                        <View style={styles.emptyContainer}>
+                                            <Text style={styles.emptyText}>Be the first one to comment!</Text>
+                                        </View>
+                                    ) : (
+                                        <FlatList
+                                            data={comments}
+                                            keyExtractor={(item) => item.created_date}
+                                            renderItem={({ item }) => (
+                                                <View style={styles.commentItem}>
+                                                    <View style={styles.commentHeader}>
+                                                        <View style={styles.commentContent}>
+                                                            <Text style={styles.username}>{item.user.username}</Text>
+                                                            <Text style={styles.commentText}>{item.comment}</Text>
+                                                        </View>
+                                                        <Text style={styles.date}>
+                                                            {getTimeAgo(item.created_date)}
+                                                        </Text>
                                                     </View>
-                                                    <Text style={styles.date}>
-                                                        {getTimeAgo(item.created_date)}
-                                                    </Text>
                                                 </View>
-                                            </View>
-                                        )}
-                                        contentContainerStyle={styles.commentsList}
-                                    />
-                                )}
-
-                                <View style={styles.inputContainer}>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={newComment}
-                                        onChangeText={setNewComment}
-                                        placeholder="Write a comment..."
-                                        placeholderTextColor="#888888"
-                                        multiline
-                                        maxLength={500}
-                                    />
-                                    <TouchableOpacity 
-                                        style={styles.sendButton}
-                                        onPress={handleSubmit}
-                                        disabled={!newComment.trim() || isSubmitting}
-                                    >
-                                        <Ionicons 
-                                            name="send" 
-                                            size={24} 
-                                            color={newComment.trim() ? "#ffffff" : "#888888"} 
+                                            )}
+                                            contentContainerStyle={styles.commentsList}
                                         />
-                                    </TouchableOpacity>
+                                    )}
+
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={newComment}
+                                            onChangeText={setNewComment}
+                                            placeholder="Write a comment..."
+                                            placeholderTextColor="#888888"
+                                            multiline
+                                            maxLength={500}
+                                        />
+                                        <TouchableOpacity 
+                                            style={styles.sendButton}
+                                            onPress={handleSubmit}
+                                            disabled={!newComment.trim() || isSubmitting}
+                                        >
+                                            <Ionicons 
+                                                name="send" 
+                                                size={24} 
+                                                color={newComment.trim() ? "#ffffff" : "#888888"} 
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
-                        </KeyboardAvoidingView>
-                    </TouchableWithoutFeedback>
-                </View>
-            </TouchableWithoutFeedback>
+                            </KeyboardAvoidingView>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
         </Modal>
     );
 };
@@ -151,6 +154,9 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    overlayTouchable: {
+        flex: 1,
     },
     modalContainer: {
         position: 'absolute',
