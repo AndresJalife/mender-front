@@ -1,7 +1,9 @@
 import * as React from "react";
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import VideoPlayer from "@/app/components/VideoPlayer";
 import { Post } from "@/app/types/Post";
+import { Ionicons } from '@expo/vector-icons';
+import { postService } from '@/app/services/postService';
 
 interface Props {
     data: Post;
@@ -10,6 +12,28 @@ interface Props {
 }
 
 const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
+    const handleLike = async () => {
+        if (data.post_id) {
+            try {
+                await postService.likePost(data.post_id);
+                // You might want to update the UI here
+            } catch (error) {
+                console.error('Error liking post:', error);
+            }
+        }
+    };
+
+    const handleSeen = async () => {
+        if (data.post_id) {
+            try {
+                await postService.markAsSeen(data.post_id);
+                // You might want to update the UI here
+            } catch (error) {
+                console.error('Error marking post as seen:', error);
+            }
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -22,6 +46,23 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                 activeItem={activeItem}
                 isHomeTab={isHomeTab}
             />
+            <View style={styles.videoDivider} />
+            <View style={styles.actionButtons}>
+                <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
+                    <Ionicons name="heart-outline" size={24} color="#ffffff" />
+                    <Text style={styles.actionButtonText}>{data.likes || 0}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton} onPress={handleSeen}>
+                    <Ionicons name="eye-outline" size={24} color="#ffffff" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton}>
+                    <Ionicons name="chatbubble-outline" size={24} color="#ffffff" />
+                    <Text style={styles.actionButtonText}>{data.comments || 0}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton}>
+                    <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
+                </TouchableOpacity>
+            </View>
             <View style={styles.videoDivider} />
             <View style={styles.contentContainer}>
                 {/* Rating and Year */}
@@ -143,6 +184,22 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#333333',
         marginBottom: 16,
+    },
+    actionButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        paddingVertical: 12,
+        backgroundColor: '#1a1a1a',
+    },
+    actionButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    actionButtonText: {
+        color: '#ffffff',
+        fontSize: 14,
     },
 });
 
