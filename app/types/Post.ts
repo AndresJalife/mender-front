@@ -18,6 +18,7 @@ export interface Post {
     likes?: number;
     liked?: boolean;
     seen?: boolean;
+    thumbnail?: string;
     comments?: number;
     created_date?: string;
 } 

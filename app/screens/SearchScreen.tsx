@@ -11,12 +11,13 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../constants/colors';
-import { searchService, SearchResult } from '../services/searchService';
+import { searchService } from '../services/searchService';
+import Post from '../types/Post';
 import debounce from 'lodash/debounce';
 
 const SearchScreen = () => {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<SearchResult[]>([]);
+    const [results, setResults] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -47,11 +48,11 @@ const SearchScreen = () => {
         debouncedSearch(text);
     };
 
-    const handleResultPress = (item: SearchResult) => {
-        router.push(`/screens/ItemScreen?id=${item.id}`);
+    const handleResultPress = (item: Post) => {
+        router.push(`/screens/ItemScreen?id=${item.post_id}`);
     };
 
-    const renderItem = ({ item }: { item: SearchResult }) => (
+    const renderItem = ({ item }: { item: Post }) => (
         <TouchableOpacity 
             style={styles.resultItem}
             onPress={() => handleResultPress(item)}
@@ -63,9 +64,9 @@ const SearchScreen = () => {
                 />
             )}
             <View style={styles.itemContent}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                <Text style={styles.itemTitle}>{item.entity?.title} - {item.entity?.year}</Text>
                 <Text style={styles.itemDescription} numberOfLines={2}>
-                    {item.description}
+                    {item.entity?.overview}
                 </Text>
             </View>
         </TouchableOpacity>
@@ -98,7 +99,7 @@ const SearchScreen = () => {
             <FlatList
                 data={results}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.post_id?.toString() || ''} 
                 contentContainerStyle={styles.resultsList}
                 ListEmptyComponent={
                     !isLoading && query.length >= 3 ? (
