@@ -58,6 +58,7 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
         try {
             setIsSubmitting(true);
             const createdDate = new Date().toISOString();
+            await postService.createComment(postId, newComment.trim());
             const comment = {
                 comment: newComment.trim(),
                 user: {
