@@ -18,7 +18,7 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
     const onNext = useCallback((index: number) => {
         'worklet';
         requestAnimationFrame(() => {
-            setActiveItem(items[index]?.entity?.link ?? "");
+            setActiveItem(items[index]?.entity?.trailer ?? "");
         });
     }, [items]);
 

@@ -62,14 +62,14 @@ const SearchScreen = () => {
             style={styles.resultItem}
             onPress={() => handleResultPress(item)}
         >
-            {item.thumbnail && (
+            {/* {item.thumbnail && (
                 <Image 
                     source={{ uri: item.thumbnail }}
                     style={styles.thumbnail}
                 />
-            )}
+            )} */}
             <View style={styles.itemContent}>
-                <Text style={styles.itemTitle}>{item.entity?.title} - {item.entity?.year}</Text>
+                <Text style={styles.itemTitle}>{item.entity?.title} - {item.entity?.release_date}</Text>
                 <Text style={styles.itemDescription} numberOfLines={2}>
                     {item.entity?.overview}
                 </Text>

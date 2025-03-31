@@ -21,7 +21,14 @@ export const postService = {
     },
     likePost: async (postId: number): Promise<void> => {
         try {
-            const response = await getAuthenticatedRequest(`/post/${postId}/like`);
+            const response = await getAuthenticatedRequest(`/post/${postId}/like`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
             if (!response?.ok) {
                 throw new Error('Failed to like post');
             }
@@ -32,7 +39,14 @@ export const postService = {
     },
     markAsSeen: async (postId: number): Promise<void> => {
         try {
-            const response = await getAuthenticatedRequest(`/post/${postId}/seen`);
+            const response = await getAuthenticatedRequest(`/post/${postId}/see`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
             if (!response?.ok) {
                 throw new Error('Failed to mark post as seen');
             }
@@ -56,7 +70,7 @@ export const postService = {
     },
     createComment: async (postId: number, comment: string): Promise<Comment> => {
         try {
-            const response = await getAuthenticatedRequest(`/post/${postId}/comments`, {
+            const response = await getAuthenticatedRequest(`/post/${postId}/comment`, {
                 method: 'POST',
                 body: JSON.stringify({ comment }),
             });

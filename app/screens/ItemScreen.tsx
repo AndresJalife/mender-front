@@ -6,17 +6,22 @@ import {
     Text,
     ActivityIndicator,
     TouchableOpacity,
+    TextInput,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { colors } from '../constants/colors';
-import { Post } from '../types/Post';
+import { Post, Genre, Actor, ProductionCompany, WatchProvider } from '../types/Post';
 import { getAuthenticatedRequest } from '../services/apiService';
+import postService from '../services/postService';
 
 const ItemScreen = () => {
     const { id } = useLocalSearchParams();
     const [post, setPost] = useState<Post | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [liked, setLiked] = useState<boolean>(false);
+    const [seen, setSeen] = useState<boolean>(false);
+    const [commentText, setCommentText] = useState<string>('');
 
     useEffect(() => {
         loadPost();
@@ -26,16 +31,70 @@ const ItemScreen = () => {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await getAuthenticatedRequest(`/posts/${id}`);
+            const response = await getAuthenticatedRequest(`/post/${id}`);
             if (!response) throw new Error('Failed to fetch post');
             
             const data = await response.json();
             setPost(data);
+            setLiked(data.user_post_info?.liked || false);
+            setSeen(data.user_post_info?.seen || false);
         } catch (err) {
             setError('Failed to load post');
             console.error(err);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleLike = async () => {
+        if (post?.post_id) {
+            try {
+                await postService.likePost(post.post_id);
+                setLiked(!liked);
+                setPost((prevPost) => ({
+                    ...prevPost,
+                    likes: (prevPost?.likes || 0) + (liked ? -1 : 1),
+                    user_post_info: {
+                        ...prevPost.user_post_info,
+                        liked: !liked,
+                    },
+                }));
+            } catch (error) {
+                console.error('Error liking post:', error);
+            }
+        }
+    };
+
+    const handleSeen = async () => {
+        if (post?.post_id) {
+            try {
+                await postService.markAsSeen(post.post_id);
+                setSeen(true);
+                setPost((prevPost) => ({
+                    ...prevPost,
+                    user_post_info: {
+                        ...prevPost.user_post_info,
+                        seen: true,
+                    },
+                }));
+            } catch (error) {
+                console.error('Error marking post as seen:', error);
+            }
+        }
+    };
+
+    const handleComment = async () => {
+        if (post?.post_id && commentText.trim()) {
+            try {
+                await postService.createComment(post.post_id, commentText);
+                setPost((prevPost) => ({
+                    ...prevPost,
+                    comments: (prevPost?.comments || 0) + 1,
+                }));
+                setCommentText('');
+            } catch (error) {
+                console.error('Error adding comment:', error);
+            }
         }
     };
 
@@ -75,25 +134,22 @@ const ItemScreen = () => {
             </View>
 
             <View style={styles.content}>
-                {post.entity?.year && (
-                    <InfoRow label="Year" value={post.entity.year.toString()} />
+                <TouchableOpacity onPress={handleLike}>
+                    <Text style={styles.likeText}>{liked ? '♥' : '♡'} {post.likes || 0} likes</Text>
+                </TouchableOpacity>
+                {post.entity?.release_date && (
+                    <InfoRow label="Release Date" value={post.entity.release_date} />
                 )}
                 {post.entity?.director && (
                     <InfoRow label="Director" value={post.entity.director} />
-                )}
-                {post.entity?.screenplay && (
-                    <InfoRow label="Screenplay" value={post.entity.screenplay} />
-                )}
-                {post.entity?.original_language && (
-                    <InfoRow label="Language" value={post.entity.original_language} />
                 )}
                 {post.entity?.genres && post.entity.genres.length > 0 && (
                     <View style={styles.genresContainer}>
                         <Text style={styles.label}>Genres</Text>
                         <View style={styles.genresList}>
-                            {post.entity.genres.map((genre, index) => (
+                            {post.entity.genres.map((genre: Genre, index: number) => (
                                 <View key={index} style={styles.genreTag}>
-                                    <Text style={styles.genreText}>{genre}</Text>
+                                    <Text style={styles.genreText}>{genre.name}</Text>
                                 </View>
                             ))}
                         </View>
@@ -107,8 +163,19 @@ const ItemScreen = () => {
                 )}
                 
                 <View style={styles.statsContainer}>
-                    <Text style={styles.statsText}>♥ {post.likes || 0} likes</Text>
                     <Text style={styles.statsText}>💬 {post.comments || 0} comments</Text>
+                </View>
+
+                <View style={styles.commentInputContainer}>
+                    <TextInput
+                        style={styles.commentInput}
+                        value={commentText}
+                        onChangeText={setCommentText}
+                        placeholder="Add a comment..."
+                    />
+                    <TouchableOpacity onPress={handleComment}>
+                        <Text style={styles.commentButton}>Post</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </ScrollView>
@@ -249,6 +316,29 @@ const styles = StyleSheet.create({
         color: colors.error,
         textAlign: 'center',
         padding: 16,
+    },
+    likeText: {
+        color: colors.textPrimary,
+        fontSize: 16,
+        marginBottom: 16,
+    },
+    commentInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 16,
+    },
+    commentInput: {
+        flex: 1,
+        padding: 12,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 8,
+    },
+    commentButton: {
+        padding: 12,
+        borderRadius: 8,
+        backgroundColor: colors.surfaceLight,
+        marginLeft: 8,
     },
 });
 

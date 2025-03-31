@@ -1,11 +1,12 @@
 import * as React from "react";
-import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity, TextInput} from "react-native";
 import VideoPlayer from "@/app/components/carousel/VideoPlayer";
 import { Post } from "@/app/types/Post";
 import { Ionicons } from '@expo/vector-icons';
 import { postService } from '@/app/services/postService';
 import CommentsModal from '../CommentsModal';
 import { router } from 'expo-router';
+import { Genre, Actor, ProductionCompany, WatchProvider } from "@/app/types/Post";
 
 interface Props {
     data: Post;
@@ -15,12 +16,20 @@ interface Props {
 
 const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
     const [showComments, setShowComments] = React.useState(false);
+    const [liked, setLiked] = React.useState(data.user_post_info?.liked || false);
+    const [seen, setSeen] = React.useState(data.user_post_info?.seen || false);
+    const [commentText, setCommentText] = React.useState<string>(''); // State for comment input
 
     const handleLike = async () => {
         if (data.post_id) {
             try {
                 await postService.likePost(data.post_id);
-                // You might want to update the UI here
+                setLiked(!liked);
+                data.likes = (data.likes || 0) + (liked ? -1 : 1);
+                data.user_post_info = {
+                    ...data.user_post_info,
+                    liked: !liked,
+                };
             } catch (error) {
                 console.error('Error liking post:', error);
             }
@@ -31,9 +40,25 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
         if (data.post_id) {
             try {
                 await postService.markAsSeen(data.post_id);
-                // You might want to update the UI here
+                setSeen(true);
+                data.user_post_info = {
+                    ...data.user_post_info,
+                    seen: true,
+                };
             } catch (error) {
                 console.error('Error marking post as seen:', error);
+            }
+        }
+    };
+
+    const handleComment = async () => {
+        if (data.post_id && commentText.trim()) {
+            try {
+                await postService.createComment(data.post_id, commentText);
+                data.comments = (data.comments || 0) + 1;
+                setCommentText('');
+            } catch (error) {
+                console.error('Error adding comment:', error);
             }
         }
     };
@@ -52,7 +77,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                 <View style={styles.headerDivider} />
             </View>
             <VideoPlayer 
-                url={data.entity?.link} 
+                url={data.entity?.trailer}
                 activeItem={activeItem}
                 isHomeTab={isHomeTab}
             />
@@ -60,19 +85,19 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
             <View style={styles.actionButtons}>
                 <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
                     <Ionicons 
-                        name={data.liked ? "heart" : "heart-outline"} 
+                        name={liked ? "heart" : "heart-outline"} 
                         size={24} 
-                        color={data.liked ? "#ff4d4d" : "#ffffff"} 
+                        color={liked ? "#ff4d4d" : "#ffffff"} 
                     />
-                    <Text style={[styles.actionButtonText, data.liked && styles.likedText]}>
+                    <Text style={[styles.actionButtonText, liked && styles.likedText]}>
                         {data.likes || 0}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={handleSeen}>
                     <Ionicons 
-                        name={data.seen ? "eye" : "eye-outline"} 
+                        name={seen ? "eye" : "eye-outline"} 
                         size={24} 
-                        color={data.seen ? "#4dff4d" : "#ffffff"} 
+                        color={seen ? "#4dff4d" : "#ffffff"} 
                     />
                 </TouchableOpacity>
                 <TouchableOpacity 
@@ -97,12 +122,12 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                 {/* Rating, Year, and Genres */}
                 <View style={styles.ratingRow}>
                     <View style={styles.ratingContainer}>
-                        <Text style={styles.rating}>☆ {data.entity?.rating || 'N/A'}</Text>
-                        <Text style={styles.year}>{data.entity?.year}</Text>
+                        <Text style={styles.rating}>☆ {data.entity?.vote_average || 'N/A'}</Text>
+                        <Text style={styles.year}>{data.entity?.release_date}</Text>
                     </View>
                     <View style={styles.genreContainer}>
-                        {data.entity?.genres?.map((genre, index) => (
-                            <Text key={index} style={styles.genreTag}>{genre}</Text>
+                        {data.entity?.genres?.map((genre: Genre, index: number) => (
+                            <Text key={index} style={styles.genreTag}>{genre.name}</Text>
                         ))}
                     </View>
                 </View>
@@ -110,6 +135,19 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
 
                 {/* Description */}
                 <Text style={styles.description}>{data.entity?.overview}</Text>
+
+                {/* Comment Input */}
+                <View style={styles.commentInputContainer}>
+                    <TextInput
+                        style={styles.commentInput}
+                        value={commentText}
+                        onChangeText={setCommentText}
+                        placeholder="Add a comment..."
+                    />
+                    <TouchableOpacity onPress={handleComment}>
+                        <Text style={styles.commentButton}>Post</Text>
+                    </TouchableOpacity>
+                </View>
 
                 {/* Additional Info */}
                 <View style={styles.infoContainer}>
@@ -262,6 +300,23 @@ const styles = StyleSheet.create({
     viewDetailsText: {
         color: '#ffffff',
         fontSize: 14,
+    },
+    commentInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        backgroundColor: '#333333',
+        borderRadius: 16,
+    },
+    commentInput: {
+        flex: 1,
+        color: '#ffffff',
+        fontSize: 16,
+    },
+    commentButton: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 

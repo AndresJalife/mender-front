@@ -25,7 +25,7 @@ const VideoPlayer: React.FC<Props> = ({url, activeItem, isHomeTab}) => {
                 <YoutubePlayer
                     height={218}
                     play={isPlaying}
-                    videoId={url} // Extract video ID from URL
+                    videoId={url?.split('v=')[1]} // Extract video ID from URL
                     onChangeState={state => {
                         if (state === 'ended') {
                             setIsPlaying(false);
