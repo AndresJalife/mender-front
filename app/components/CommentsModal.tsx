@@ -17,6 +17,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Comment } from '@/app/types/Comment';
 import { postService } from '@/app/services/postService';
 import { getTimeAgo } from '@/app/utils/timeUtils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface Props {
     postId: number;
@@ -29,6 +31,8 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const currentUser = useSelector((state: RootState) => state.auth.user);
 
     useEffect(() => {
         if (visible) {
@@ -53,10 +57,21 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
 
         try {
             setIsSubmitting(true);
-            const comment = await postService.createComment(postId, newComment.trim());
+            const createdDate = new Date().toISOString();
+            const comment = {
+                comment: newComment.trim(),
+                user: {
+                    id: currentUser?.id || 0,
+                    email: currentUser?.email || "",
+                    name: currentUser?.name || "",
+                    username: currentUser?.username || "",
+                    password: "",
+                },
+                created_date: createdDate,
+            };
             setComments(prev => [comment, ...prev]);
             setNewComment('');
-            Keyboard.dismiss(); // Dismiss the keyboard after sending
+            Keyboard.dismiss();
         } catch (error) {
             console.error('Error creating comment:', error);
         } finally {
@@ -93,12 +108,12 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
                                     ) : (
                                         <FlatList
                                             data={comments}
-                                            keyExtractor={(item) => item.created_date}
+                                            keyExtractor={(item) => item.created_date || 'now'}
                                             renderItem={({ item }) => (
                                                 <View style={styles.commentItem}>
                                                     <View style={styles.commentHeader}>
                                                         <View style={styles.commentContent}>
-                                                            <Text style={styles.username}>{item.user.username}</Text>
+                                                            <Text style={styles.username}>{item.user.name}</Text>
                                                             <Text style={styles.commentText}>{item.comment}</Text>
                                                         </View>
                                                         <Text style={styles.date}>
