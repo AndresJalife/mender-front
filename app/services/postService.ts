@@ -6,7 +6,7 @@ import { Comment } from '@/app/types/Comment';
 export const postService = {
     getPosts: async (filters: Filters): Promise<Post[]> => {
         try {
-            const response = await getAuthenticatedRequest('/post');
+            const response = await getAuthenticatedRequest('/post?k=10');
             
             if (!response?.ok) {
                 throw new Error('Failed to fetch messages');

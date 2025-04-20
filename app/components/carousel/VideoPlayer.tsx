@@ -12,11 +12,11 @@ const VideoPlayer: React.FC<Props> = ({url, activeItem, isHomeTab}) => {
     const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
-        if (isHomeTab && activeItem === url) {
-            setIsPlaying(true);
-        } else {
-            setIsPlaying(false);
-        }
+        // if (isHomeTab && activeItem === url) {
+        //     setIsPlaying(true);
+        // } else {
+        //     setIsPlaying(false);
+        // }
     }, [activeItem, url, isHomeTab]);
 
     return (

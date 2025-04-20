@@ -2,25 +2,36 @@ import * as React from 'react';
 import {Dimensions, StyleSheet, Text, View, LogBox} from 'react-native';
 import CarouselComp from 'react-native-reanimated-carousel';
 import CarouselItem from './CarouselItem'; // Updated import path
-import {useCallback, useState} from "react"; // Removed unused imports
+import {useCallback, useState, useEffect} from "react"; // Removed unused imports
 import { Post } from "@/app/types/Post";
 
 interface IndexProps {
     items: Post[];
-    currentTab: string; 
+    currentTab: string;
+    onLoadMore: () => void;
 }
 
 LogBox.ignoreLogs(['[react-native-reanimated]']);
 
-const Carousel: React.FC<IndexProps> = ({items, currentTab}) => {
+const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
     const [activeItem, setActiveItem] = useState("");
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     const onNext = useCallback((index: number) => {
         'worklet';
         requestAnimationFrame(() => {
             setActiveItem(items[index]?.entity?.trailer ?? "");
+            setCurrentIndex(index);
         });
     }, [items]);
+
+    useEffect(() => {
+        // When there are 3 items left, trigger load more
+        if (items.length - currentIndex <= 3) {
+            console.log("3 items left")
+            onLoadMore();
+        }
+    }, [currentIndex, items.length, onLoadMore]);
 
     return (
         <View style={styles.carouselContainer} pointerEvents="box-none">

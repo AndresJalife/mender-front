@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Post } from '@/app/types/Post';
@@ -9,26 +9,45 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import colors from '@/app/constants/colors';
 
-
 const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const filters = useSelector((state: RootState) => state.filter.filters);
     const hasActiveFilters = Object.entries(filters).some(([_, value]) => 
         value !== undefined && value !== '' && value !== null
     );
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                const response = await postService.getPosts(filters);
+    const fetchPosts = useCallback(async (shouldAppend = false) => {
+        try {
+            setIsLoading(true);
+            const response = await postService.getPosts(filters);
+            if (shouldAppend) {
+                setPosts(prevPosts => {
+                    // Keep the last 4 items from the current list
+                    const lastFourItems = prevPosts.slice(-4);
+                    // Combine them with the new 10 items
+                    return [...lastFourItems, ...response];
+                });
+            } else {
                 setPosts(response);
-            } catch (error) {
-                console.error('Error fetching posts:', error);
             }
-        };
-
-        fetchPosts();
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        } finally {
+            setIsLoading(false);
+        }
     }, [filters]);
+
+    useEffect(() => {
+        console.log("filters changed")
+        fetchPosts(false);
+    }, [filters]);
+
+    const handleLoadMore = useCallback(() => {
+        if (!isLoading) {
+            fetchPosts(true);
+        }
+    }, [isLoading, fetchPosts]);
 
     const handleFilterPress = () => {
         router.push('/screens/FiltersScreen');
@@ -36,7 +55,11 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
 
     return (
         <View style={styles.container}>
-            <Carousel items={posts || []} currentTab={currentTab} />
+            <Carousel 
+                items={posts || []} 
+                currentTab={currentTab} 
+                onLoadMore={handleLoadMore}
+            />
             <TouchableOpacity 
                 style={styles.filterButton} 
                 onPress={handleFilterPress}
