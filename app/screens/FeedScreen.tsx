@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Post } from '@/app/types/Post';
@@ -19,13 +19,20 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
 
     const fetchPosts = useCallback(async (shouldAppend = false) => {
         try {
+            if (isLoading) return;
             setIsLoading(true);
-            const response = await postService.getPosts(filters);
+            
+            // Get imdb_ids from current posts to avoid duplicates
+            const avoidImdbIds = posts.map(post => post.entity?.imdb_id)
+                .filter((id): id is string => id !== undefined);
+            
+            const response = await postService.getPosts(filters, avoidImdbIds);
+            
             if (shouldAppend) {
                 setPosts(prevPosts => {
-                    // Keep the last 4 items from the current list
+                    // Keep only the last 4 items from the current list
                     const lastFourItems = prevPosts.slice(-4);
-                    // Combine them with the new 10 items
+                    // Combine them with the new items
                     return [...lastFourItems, ...response];
                 });
             } else {
@@ -36,10 +43,10 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [filters]);
+    }, [filters, posts, isLoading]);
 
     useEffect(() => {
-        console.log("filters changed")
+        console.log("filters useffect")
         fetchPosts(false);
     }, [filters]);
 

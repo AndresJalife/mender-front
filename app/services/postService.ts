@@ -4,15 +4,33 @@ import { Filters } from '@/app/types/Post';
 import { Comment } from '@/app/types/Comment';
 
 export const postService = {
-    getPosts: async (filters: Filters): Promise<Post[]> => {
+    getPosts: async (filters: Filters, avoidImdbIds: string[] = []): Promise<Post[]> => {
         try {
-            const response = await getAuthenticatedRequest('/post?k=10');
+            console.log(avoidImdbIds)
+            const response = await getAuthenticatedRequest('/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    genre: filters.genre,
+                    min_release_date: filters.min_release_date,
+                    max_release_date: filters.max_release_date,
+                    min_rating: filters.min_rating,
+                    max_rating: filters.max_rating,
+                    avoid_imdb_ids: avoidImdbIds
+                })
+            });
             
             if (!response?.ok) {
                 throw new Error('Failed to fetch messages');
             }
 
             const data = await response.json();
+            
+            // Log all post IDs received
+            console.log('Received post IDs:', data.map((post: Post) => post.post_id));
+
             return data as Post[];
         } catch (error) {
             console.error('Error in getPosts:', error);

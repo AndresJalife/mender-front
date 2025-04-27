@@ -9,9 +9,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface LocalFilters {
     genre: string;
-    yearFrom: string;
-    yearTo: string;
-    rating: string;
+    min_release_date: string;
+    max_release_date: string;
+    min_rating: string;
+    max_rating: string;
 }
 
 export default function FiltersScreen() {
@@ -20,13 +21,15 @@ export default function FiltersScreen() {
     const [showGenrePicker, setShowGenrePicker] = useState(false);
     const [showFromYearPicker, setShowFromYearPicker] = useState(false);
     const [showToYearPicker, setShowToYearPicker] = useState(false);
-    const [showRatingPicker, setShowRatingPicker] = useState(false);
+    const [showMinRatingPicker, setShowMinRatingPicker] = useState(false);
+    const [showMaxRatingPicker, setShowMaxRatingPicker] = useState(false);
 
     const [localFilters, setLocalFilters] = useState<LocalFilters>({
         genre: currentFilters.genre || '',
-        yearFrom: currentFilters.yearFrom?.toString() || '',
-        yearTo: currentFilters.yearTo?.toString() || '',
-        rating: currentFilters.rating?.toString() || '',
+        min_release_date: currentFilters.min_release_date || '',
+        max_release_date: currentFilters.max_release_date || '',
+        min_rating: currentFilters.min_rating?.toString() || '',
+        max_rating: currentFilters.max_rating?.toString() || '',
     });
 
     const genres = [
@@ -52,10 +55,11 @@ export default function FiltersScreen() {
 
     const handleApplyFilters = () => {
         const filters = {
-            ...localFilters,
-            yearFrom: localFilters.yearFrom ? parseInt(localFilters.yearFrom) : undefined,
-            yearTo: localFilters.yearTo ? parseInt(localFilters.yearTo) : undefined,
-            rating: localFilters.rating ? parseFloat(localFilters.rating) : undefined
+            genre: localFilters.genre,
+            min_release_date: localFilters.min_release_date,
+            max_release_date: localFilters.max_release_date,
+            min_rating: localFilters.min_rating ? parseFloat(localFilters.min_rating) : undefined,
+            max_rating: localFilters.max_rating ? parseFloat(localFilters.max_rating) : undefined
         };
         
         dispatch(setFilters(filters));
@@ -65,9 +69,10 @@ export default function FiltersScreen() {
     const handleClearFilters = () => {
         setLocalFilters({
             genre: '',
-            yearFrom: '',
-            yearTo: '',
-            rating: '',
+            min_release_date: '',
+            max_release_date: '',
+            min_rating: '',
+            max_rating: '',
         });
         dispatch(setFilters({}));
     };
@@ -108,9 +113,9 @@ export default function FiltersScreen() {
                     >
                         <Text style={[
                             styles.dropdownButtonText,
-                            localFilters.yearFrom && { opacity: 1, fontWeight: '600' }
+                            localFilters.min_release_date && { opacity: 1, fontWeight: '600' }
                         ]}>
-                            {localFilters.yearFrom || "From"}
+                            {localFilters.min_release_date || "From"}
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -119,9 +124,9 @@ export default function FiltersScreen() {
                     >
                         <Text style={[
                             styles.dropdownButtonText,
-                            localFilters.yearTo && { opacity: 1, fontWeight: '600' }
+                            localFilters.max_release_date && { opacity: 1, fontWeight: '600' }
                         ]}>
-                            {localFilters.yearTo || "To"}
+                            {localFilters.max_release_date || "To"}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -194,25 +199,25 @@ export default function FiltersScreen() {
                                     key={year}
                                     style={[
                                         styles.modalItem,
-                                        localFilters.yearFrom === year.toString() && styles.modalItemSelected
+                                        localFilters.min_release_date === year.toString() && styles.modalItemSelected
                                     ]}
                                     onPress={() => {
                                         setLocalFilters(prev => ({
                                             ...prev,
-                                            yearFrom: year.toString(),
-                                            // Clear yearTo if it's now invalid
-                                            yearTo: prev.yearTo && parseInt(prev.yearTo) < year ? '' : prev.yearTo
+                                            min_release_date: year.toString(),
+                                            // Clear max_release_date if it's now invalid
+                                            max_release_date: prev.max_release_date && parseInt(prev.max_release_date) < year ? '' : prev.max_release_date
                                         }));
                                         setShowFromYearPicker(false);
                                     }}
                                 >
                                     <Text style={[
                                         styles.modalItemText,
-                                        localFilters.yearFrom === year.toString() && styles.modalItemTextSelected
+                                        localFilters.min_release_date === year.toString() && styles.modalItemTextSelected
                                     ]}>
                                         {year}
                                     </Text>
-                                    {localFilters.yearFrom === year.toString() && (
+                                    {localFilters.min_release_date === year.toString() && (
                                         <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
                                     )}
                                 </TouchableOpacity>
@@ -240,26 +245,26 @@ export default function FiltersScreen() {
                     >
                         <ScrollView>
                             {years
-                                .filter(year => !localFilters.yearFrom || parseInt(localFilters.yearFrom) <= year)
+                                .filter(year => !localFilters.min_release_date || parseInt(localFilters.min_release_date) <= year)
                                 .map((year) => (
                                     <TouchableOpacity
                                         key={year}
                                         style={[
                                             styles.modalItem,
-                                            localFilters.yearTo === year.toString() && styles.modalItemSelected
+                                            localFilters.max_release_date === year.toString() && styles.modalItemSelected
                                         ]}
                                         onPress={() => {
-                                            setLocalFilters(prev => ({ ...prev, yearTo: year.toString() }));
+                                            setLocalFilters(prev => ({ ...prev, max_release_date: year.toString() }));
                                             setShowToYearPicker(false);
                                         }}
                                     >
                                         <Text style={[
                                             styles.modalItemText,
-                                            localFilters.yearTo === year.toString() && styles.modalItemTextSelected
+                                            localFilters.max_release_date === year.toString() && styles.modalItemTextSelected
                                         ]}>
                                             {year}
                                         </Text>
-                                        {localFilters.yearTo === year.toString() && (
+                                        {localFilters.max_release_date === year.toString() && (
                                             <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
                                         )}
                                     </TouchableOpacity>
@@ -273,61 +278,121 @@ export default function FiltersScreen() {
                 <Text style={styles.label}>Minimum Rating</Text>
                 <TouchableOpacity
                     style={styles.dropdownButton}
-                    onPress={() => setShowRatingPicker(true)}
+                    onPress={() => setShowMinRatingPicker(true)}
                 >
                     <Text style={[
                         styles.dropdownButtonText,
-                        localFilters.rating && { opacity: 1, fontWeight: '600' }
+                        localFilters.min_rating && { opacity: 1, fontWeight: '600' }
                     ]}>
-                        {localFilters.rating || "Select Rating"}
+                        {localFilters.min_rating || "Select Minimum Rating"}
                     </Text>
                 </TouchableOpacity>
             </View>
 
-            <Modal
-                visible={showRatingPicker}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setShowRatingPicker(false)}
-            >
-                <TouchableOpacity 
-                    style={styles.modalContainer} 
-                    activeOpacity={1} 
-                    onPress={() => setShowRatingPicker(false)}
+            <View style={styles.filterSection}>
+                <Text style={styles.label}>Maximum Rating</Text>
+                <TouchableOpacity
+                    style={styles.dropdownButton}
+                    onPress={() => setShowMaxRatingPicker(true)}
                 >
-                    <TouchableOpacity 
-                        activeOpacity={1} 
-                        style={styles.modalContent}
-                        onPress={e => e.stopPropagation()}
-                    >
-                        <ScrollView>
-                            {ratings.map((rating) => (
-                                <TouchableOpacity
-                                    key={rating.value}
-                                    style={[
-                                        styles.modalItem,
-                                        localFilters.rating === rating.value && styles.modalItemSelected
-                                    ]}
-                                    onPress={() => {
-                                        setLocalFilters(prev => ({ ...prev, rating: rating.value }));
-                                        setShowRatingPicker(false);
-                                    }}
-                                >
-                                    <Text style={[
-                                        styles.modalItemText,
-                                        localFilters.rating === rating.value && styles.modalItemTextSelected
-                                    ]}>
-                                        {`${rating.label} ${rating.value === '1' ? 'star' : 'stars'}`}
-                                    </Text>
-                                    {localFilters.rating === rating.value && (
-                                        <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
-                                    )}
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </TouchableOpacity>
+                    <Text style={[
+                        styles.dropdownButtonText,
+                        localFilters.max_rating && { opacity: 1, fontWeight: '600' }
+                    ]}>
+                        {localFilters.max_rating || "Select Maximum Rating"}
+                    </Text>
                 </TouchableOpacity>
-            </Modal>
+            </View>
+
+    <Modal
+        visible={showMinRatingPicker}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowMinRatingPicker(false)}
+    >
+        <TouchableOpacity 
+            style={styles.modalContainer} 
+            activeOpacity={1} 
+            onPress={() => setShowMinRatingPicker(false)}
+        >
+            <TouchableOpacity 
+                activeOpacity={1} 
+                style={styles.modalContent}
+                onPress={e => e.stopPropagation()}
+            >
+                <ScrollView>
+                    {ratings.map((rating) => (
+                        <TouchableOpacity
+                            key={rating.value}
+                            style={[
+                                styles.modalItem,
+                                localFilters.min_rating === rating.value && styles.modalItemSelected
+                            ]}
+                            onPress={() => {
+                                setLocalFilters(prev => ({ ...prev, min_rating: rating.value }));
+                                setShowMinRatingPicker(false);
+                            }}
+                        >
+                            <Text style={[
+                                styles.modalItemText,
+                                localFilters.min_rating === rating.value && styles.modalItemTextSelected
+                            ]}>
+                                {`${rating.label} ${rating.value === '1' ? 'star' : 'stars'}`}
+                            </Text>
+                            {localFilters.min_rating === rating.value && (
+                                <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
+                            )}
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </TouchableOpacity>
+        </TouchableOpacity>
+    </Modal>
+
+    <Modal
+        visible={showMaxRatingPicker}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowMaxRatingPicker(false)}
+    >
+        <TouchableOpacity 
+            style={styles.modalContainer} 
+            activeOpacity={1} 
+            onPress={() => setShowMaxRatingPicker(false)}
+        >
+            <TouchableOpacity 
+                activeOpacity={1} 
+                style={styles.modalContent}
+                onPress={e => e.stopPropagation()}
+            >
+                <ScrollView>
+                    {ratings.map((rating) => (
+                        <TouchableOpacity
+                            key={rating.value}
+                            style={[
+                                styles.modalItem,
+                                localFilters.max_rating === rating.value && styles.modalItemSelected
+                            ]}
+                            onPress={() => {
+                                setLocalFilters(prev => ({ ...prev, max_rating: rating.value }));
+                                setShowMaxRatingPicker(false);
+                            }}
+                        >
+                            <Text style={[
+                                styles.modalItemText,
+                                localFilters.max_rating === rating.value && styles.modalItemTextSelected
+                            ]}>
+                                {`${rating.label} ${rating.value === '1' ? 'star' : 'stars'}`}
+                            </Text>
+                            {localFilters.max_rating === rating.value && (
+                                <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
+                            )}
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </TouchableOpacity>
+        </TouchableOpacity>
+    </Modal>
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 

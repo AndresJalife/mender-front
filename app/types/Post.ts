@@ -59,9 +59,10 @@ export interface Post {
 
 export interface Filters {
     genre?: string;
-    yearFrom?: number;
-    yearTo?: number;
-    rating?: number;
+    min_release_date?: string;
+    max_release_date?: string;
+    min_rating?: number;
+    max_rating?: number;
 }
 
 export default Post;

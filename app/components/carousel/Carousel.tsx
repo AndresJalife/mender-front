@@ -16,6 +16,7 @@ LogBox.ignoreLogs(['[react-native-reanimated]']);
 const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
     const [activeItem, setActiveItem] = useState("");
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const onNext = useCallback((index: number) => {
         'worklet';
@@ -27,11 +28,17 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
 
     useEffect(() => {
         // When there are 3 items left, trigger load more
-        if (items.length - currentIndex <= 3) {
-            console.log("3 items left")
+        console.log(items.length)
+        console.log(currentIndex)
+        const relativeIndex = currentIndex % 10;
+        console.log(relativeIndex)
+        if (items.length - relativeIndex <= 3 && !isLoadingMore) {
+            setIsLoadingMore(true);
             onLoadMore();
+            // Reset loading state after a short delay to prevent immediate re-triggering
+            setTimeout(() => setIsLoadingMore(false), 1000);
         }
-    }, [currentIndex, items.length, onLoadMore]);
+    }, [currentIndex, items.length]);
 
     return (
         <View style={styles.carouselContainer} pointerEvents="box-none">
