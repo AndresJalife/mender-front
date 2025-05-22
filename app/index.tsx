@@ -1,7 +1,7 @@
 // App.tsx
 import React from 'react';
 import MainScreen from './screens/MainScreen';
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
@@ -14,5 +14,9 @@ configureReanimatedLogger({
 });
 
 export default function App() {
-  return <MainScreen />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <MainScreen />
+    </GestureHandlerRootView>
+  );
 }

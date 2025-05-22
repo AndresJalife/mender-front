@@ -33,6 +33,7 @@ interface SignupResponse {
 export const loginService = {
     login: async (credentials: LoginCredentials): Promise<boolean> => {
         try {
+            console.log('login');
             const response = await fetch('http://143.244.190.174:8443/general/login', {
                 method: 'POST',
                 headers: {
