@@ -4,9 +4,9 @@ import { Filters } from '@/app/types/Post';
 import { Comment } from '@/app/types/Comment';
 
 export const postService = {
-    getPosts: async (filters: Filters, avoidImdbIds: string[] = []): Promise<Post[]> => {
+    getPosts: async (filters: Filters, avoidTmdbIds: number[] = []): Promise<Post[]> => {
         try {
-            console.log(avoidImdbIds)
+            console.log("avoidImdbIds: ", avoidTmdbIds)
             const response = await getAuthenticatedRequest('/post', {
                 method: 'POST',
                 headers: {
@@ -18,7 +18,7 @@ export const postService = {
                     max_release_date: filters.max_release_date,
                     min_rating: filters.min_rating,
                     max_rating: filters.max_rating,
-                    avoid_imdb_ids: avoidImdbIds
+                    avoid_tmdb_ids: avoidTmdbIds
                 })
             });
             

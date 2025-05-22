@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Dimensions, StyleSheet, Text, View, LogBox} from 'react-native';
 import CarouselComp from 'react-native-reanimated-carousel';
-import CarouselItem from './CarouselItem'; // Updated import path
-import {useCallback, useState, useEffect} from "react"; // Removed unused imports
+import CarouselItem from './CarouselItem'; 
+import {useCallback, useState, useEffect, useRef} from "react";
 import { Post } from "@/app/types/Post";
 
 interface IndexProps {
@@ -17,6 +17,7 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
     const [activeItem, setActiveItem] = useState("");
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const firstRender = useRef(true);
 
     const onNext = useCallback((index: number) => {
         'worklet';
@@ -27,21 +28,24 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
     }, [items]);
 
     useEffect(() => {
-        // When there are 3 items left, trigger load more
-        console.log(items.length)
-        console.log(currentIndex)
-        const relativeIndex = currentIndex % 10;
-        console.log(relativeIndex)
-        if (items.length - relativeIndex <= 3 && !isLoadingMore) {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        const remaining = items.length - 1 - currentIndex;
+        console.log("Remaining items: ", remaining);
+
+        if (remaining <= 3 && !isLoadingMore) {
             setIsLoadingMore(true);
             onLoadMore();
-            // Reset loading state after a short delay to prevent immediate re-triggering
             setTimeout(() => setIsLoadingMore(false), 1000);
         }
     }, [currentIndex, items.length]);
 
+
     return (
-        <View style={styles.carouselContainer} pointerEvents="box-none">
+        <View style={styles.carouselContainer}>
             <CarouselComp
                 width={Dimensions.get('window').width}
                 autoPlay={false}
@@ -49,6 +53,7 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
                 vertical={true}
                 onSnapToItem={onNext}
                 data={items}
+                windowSize={5}
                 renderItem={({ index }: { index: number }) => (
                     <CarouselItem 
                         data={items[index]} 

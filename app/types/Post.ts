@@ -21,7 +21,7 @@ export interface WatchProvider {
 export interface Entity {
     entity_id?: number;
     entity_type?: string;
-    tmdb_id?: number;
+    tmbd_id?: number;
     imdb_id?: string;
     title?: string;
     vote_average?: number;

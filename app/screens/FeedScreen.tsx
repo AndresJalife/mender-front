@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, {useEffect, useState, useCallback, useRef, startTransition} from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Post } from '@/app/types/Post';
@@ -16,45 +16,55 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     const hasActiveFilters = Object.entries(filters).some(([_, value]) => 
         value !== undefined && value !== '' && value !== null
     );
+    const [seenTmdbIds, setSeenTmdbIds] = useState<number[]>([]);
 
-    const fetchPosts = useCallback(async (shouldAppend = false) => {
+    const fetchPosts = async (shouldAppend = false) => {
         try {
+            console.log("Fetching posts")
             if (isLoading) return;
+
             setIsLoading(true);
             
-            // Get imdb_ids from current posts to avoid duplicates
-            const avoidImdbIds = posts.map(post => post.entity?.imdb_id)
-                .filter((id): id is string => id !== undefined);
-            
-            const response = await postService.getPosts(filters, avoidImdbIds);
-            
-            if (shouldAppend) {
-                setPosts(prevPosts => {
-                    // Keep only the last 4 items from the current list
-                    const lastFourItems = prevPosts.slice(-4);
-                    // Combine them with the new items
-                    return [...lastFourItems, ...response];
-                });
-            } else {
-                setPosts(response);
-            }
+            const response = await postService.getPosts(filters, seenTmdbIds);
+
+            // @ts-ignore
+            setSeenTmdbIds(prevSeenIds => {
+                const newSeenIds = response.map(post => post.entity?.tmbd_id);
+                return [...prevSeenIds, ...newSeenIds];
+            })
+            console.log("Seen IDs: ", seenTmdbIds)
+
+            startTransition(() => { setPosts(prevPosts => [...prevPosts, ...response])});
         } catch (error) {
             console.error('Error fetching posts:', error);
         } finally {
             setIsLoading(false);
         }
-    }, [filters, posts, isLoading]);
+    };
 
+    // Initial fetch
     useEffect(() => {
-        console.log("filters useffect")
-        fetchPosts(false);
+        if (posts.length === 0) {
+            fetchPosts(false);
+        }
+    }, []);
+
+    // Filter changes
+    useEffect(() => {
+        if (Object.keys(filters).length > 0) {
+            console.log("filters changed")
+            fetchPosts(false);
+        }
     }, [filters]);
 
     const handleLoadMore = useCallback(() => {
         if (!isLoading) {
+            console.log("handleLoadMore")
             fetchPosts(true);
+        } else {
+            console.log("isLoading: ", isLoading)
         }
-    }, [isLoading, fetchPosts]);
+    }, [isLoading]);
 
     const handleFilterPress = () => {
         router.push('/screens/FiltersScreen');
