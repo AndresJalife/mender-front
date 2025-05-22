@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     View,
     StyleSheet,
@@ -18,6 +18,7 @@ const ChatScreen = () => {
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
         loadMessages();
@@ -26,8 +27,9 @@ const ChatScreen = () => {
     const loadMessages = async () => {
         try {
             setIsLoading(true);
-            const fetchedMessages = await chatService.getMessages();
-            setMessages(fetchedMessages);
+            const fetched = await chatService.getMessages();
+            // fetched is oldest→newest — make a copy, flip it once
+            setMessages(fetched.slice().reverse());
         } catch (err) {
             setError('Failed to load messages');
             console.error(err);
@@ -75,10 +77,12 @@ const ChatScreen = () => {
                 <Text style={styles.headerText}>Mender Bot</Text>
             </View>
             <FlatList
-                data={messages}
+                ref={flatListRef}
+                data={messages}                         // already newest→oldest
+                inverted                                // draws index 0 at the bottom
                 renderItem={renderMessage}
-                keyExtractor={(item, index) => index.toString()}
                 contentContainerStyle={styles.messagesList}
+                maintainVisibleContentPosition={{minIndexForVisible: 0}}  // 👈 keeps it “stuck” to the bottom
             />
             {error && (
                 <Text style={styles.errorText}>{error}</Text>
