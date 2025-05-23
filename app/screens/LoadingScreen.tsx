@@ -71,14 +71,14 @@ const styles = StyleSheet.create({
   lineContainer: {
     width: LINE_WIDTH,
     height: 4,
-    backgroundColor: '#333',
+    backgroundColor: '#fff',
     marginTop: 20,
     borderRadius: 2,
     overflow: 'hidden',
   },
   line: {
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
   text: {
     fontSize: 32,
