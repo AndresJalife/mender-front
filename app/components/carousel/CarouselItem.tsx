@@ -137,17 +137,17 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                 <Text style={styles.description}>{data.entity?.overview}</Text>
 
                 {/* Comment Input */}
-                <View style={styles.commentInputContainer}>
-                    <TextInput
-                        style={styles.commentInput}
-                        value={commentText}
-                        onChangeText={setCommentText}
-                        placeholder="Add a comment..."
-                    />
-                    <TouchableOpacity onPress={handleComment}>
-                        <Text style={styles.commentButton}>Post</Text>
-                    </TouchableOpacity>
-                </View>
+                {/*<View style={styles.commentInputContainer}>*/}
+                {/*    <TextInput*/}
+                {/*        style={styles.commentInput}*/}
+                {/*        value={commentText}*/}
+                {/*        onChangeText={setCommentText}*/}
+                {/*        placeholder="Add a comment..."*/}
+                {/*    />*/}
+                {/*    <TouchableOpacity onPress={handleComment}>*/}
+                {/*        <Text style={styles.commentButton}>Post</Text>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*</View>*/}
 
                 {/* Additional Info */}
                 <View style={styles.infoContainer}>

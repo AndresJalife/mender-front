@@ -1,6 +1,7 @@
 // App.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import MainScreen from './screens/MainScreen';
+import LoadingScreen from './screens/LoadingScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   configureReanimatedLogger,
@@ -14,9 +15,12 @@ configureReanimatedLogger({
 });
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <MainScreen />
+      {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
     </GestureHandlerRootView>
   );
 }
