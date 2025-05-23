@@ -134,20 +134,9 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                 <View style={styles.genreDivider} />
 
                 {/* Description */}
-                <Text style={styles.description}>{data.entity?.overview}</Text>
-
-                {/* Comment Input */}
-                {/*<View style={styles.commentInputContainer}>*/}
-                {/*    <TextInput*/}
-                {/*        style={styles.commentInput}*/}
-                {/*        value={commentText}*/}
-                {/*        onChangeText={setCommentText}*/}
-                {/*        placeholder="Add a comment..."*/}
-                {/*    />*/}
-                {/*    <TouchableOpacity onPress={handleComment}>*/}
-                {/*        <Text style={styles.commentButton}>Post</Text>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*</View>*/}
+                <Text style={styles.description} numberOfLines={5} ellipsizeMode="tail">
+                    {data.entity?.overview}
+                </Text>
 
                 {/* Additional Info */}
                 <View style={styles.infoContainer}>
@@ -181,6 +170,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingTop: 50,
         paddingBottom: 12,
+        flexDirection: 'column',
+        width: '100%',
     },
     contentContainer: {
         backgroundColor: '#1a1a1a',
@@ -194,8 +185,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ffffff',
         marginBottom: 8,
-        paddingRight: 30,
-        marginRight: 15,
+        flexWrap: 'wrap',
+        width: '100%',
     },
     director: {
         color: '#888888',
