@@ -33,6 +33,7 @@ export interface Entity {
     tagline?: string;
     trailer?: string;
     director?: string;
+    image_id?: string;
     genres?: Genre[];
     actors?: Actor[];
     production_companies?: ProductionCompany[];
