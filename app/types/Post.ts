@@ -59,7 +59,7 @@ export interface Post {
 }
 
 export interface Filters {
-    genre?: string;
+    genres?: string[];
     min_release_date?: string;
     max_release_date?: string;
     min_rating?: number;

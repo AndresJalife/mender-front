@@ -18,7 +18,7 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     );
     const [seenTmdbIds, setSeenTmdbIds] = useState<number[]>([]);
 
-    const fetchPosts = async (shouldAppend = false) => {
+    const fetchPosts = async (shouldReplace = false) => {
         try {
             console.log("Fetching posts")
             if (isLoading) return;
@@ -34,7 +34,11 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
             })
             console.log("Seen IDs: ", seenTmdbIds)
 
-            startTransition(() => { setPosts(prevPosts => [...prevPosts, ...response])});
+            if (shouldReplace) {
+                startTransition(() => { setPosts(response) });
+            } else {
+                startTransition(() => { setPosts(prevPosts => [...prevPosts, ...response])});
+            }
         } catch (error) {
             console.error('Error fetching posts:', error);
         } finally {
@@ -53,14 +57,15 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     useEffect(() => {
         if (Object.keys(filters).length > 0) {
             console.log("filters changed")
-            fetchPosts(false);
+            setSeenTmdbIds([]);
+            fetchPosts(true);
         }
     }, [filters]);
 
     const handleLoadMore = useCallback(() => {
         if (!isLoading) {
             console.log("handleLoadMore")
-            fetchPosts(true);
+            fetchPosts(false);
         } else {
             console.log("isLoading: ", isLoading)
         }

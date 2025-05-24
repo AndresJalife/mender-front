@@ -8,7 +8,7 @@ import colors from '@/app/constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 
 interface LocalFilters {
-    genre: string;
+    genres: string[];
     min_release_date: string;
     max_release_date: string;
     min_rating: string;
@@ -25,7 +25,7 @@ export default function FiltersScreen() {
     const [showMaxRatingPicker, setShowMaxRatingPicker] = useState(false);
 
     const [localFilters, setLocalFilters] = useState<LocalFilters>({
-        genre: currentFilters.genre || '',
+        genres: currentFilters.genres || [],
         min_release_date: currentFilters.min_release_date || '',
         max_release_date: currentFilters.max_release_date || '',
         min_rating: currentFilters.min_rating?.toString() || '',
@@ -33,14 +33,14 @@ export default function FiltersScreen() {
     });
 
     const genres = [
-        { label: 'All', value: 'all' },
-        { label: 'Action', value: 'action' },
-        { label: 'Comedy', value: 'comedy' },
-        { label: 'Drama', value: 'drama' },
-        { label: 'Horror', value: 'horror' },
-        { label: 'Romance', value: 'romance' },
-        { label: 'Sci-Fi', value: 'sci-fi' },
-        { label: 'Documentary', value: 'documentary' }
+        { label: 'All', value: 'All' },
+        { label: 'Action', value: 'Action' },
+        { label: 'Comedy', value: 'Comedy' },
+        { label: 'Drama', value: 'Drama' },
+        { label: 'Horror', value: 'Horror' },
+        { label: 'Romance', value: 'Romance' },
+        { label: 'Sci-Fi', value: 'Sci-Fi' },
+        { label: 'Documentary', value: 'Documentary' }
     ];
 
     // Generate years from 1900 to current year
@@ -55,12 +55,20 @@ export default function FiltersScreen() {
 
     const handleApplyFilters = () => {
         const filters = {
-            genre: localFilters.genre,
-            min_release_date: localFilters.min_release_date,
-            max_release_date: localFilters.max_release_date,
+            genres: localFilters.genres,
+            min_release_date: localFilters.min_release_date ? `01/01/${localFilters.min_release_date}` : undefined,
+            max_release_date: localFilters.max_release_date ? `01/01/${localFilters.max_release_date}` : undefined,
             min_rating: localFilters.min_rating ? parseFloat(localFilters.min_rating) : undefined,
             max_rating: localFilters.max_rating ? parseFloat(localFilters.max_rating) : undefined
         };
+        
+        // Remove any existing date formatting to prevent double prefixing
+        if (filters.min_release_date?.includes('01/01/')) {
+            filters.min_release_date = filters.min_release_date.replace('01/01/', '');
+        }
+        if (filters.max_release_date?.includes('01/01/')) {
+            filters.max_release_date = filters.max_release_date.replace('01/01/', '');
+        }
         
         dispatch(setFilters(filters));
         router.back();
@@ -68,13 +76,27 @@ export default function FiltersScreen() {
 
     const handleClearFilters = () => {
         setLocalFilters({
-            genre: '',
+            genres: [],
             min_release_date: '',
             max_release_date: '',
             min_rating: '',
             max_rating: '',
         });
         dispatch(setFilters({}));
+    };
+
+    const toggleGenre = (genreValue: string) => {
+        setLocalFilters(prev => {
+            if (genreValue === 'All') {
+                return { ...prev, genres: [] };
+            }
+            
+            const newGenres = prev.genres.includes(genreValue)
+                ? prev.genres.filter(g => g !== genreValue)
+                : [...prev.genres, genreValue];
+            
+            return { ...prev, genres: newGenres };
+        });
     };
 
     return (
@@ -90,16 +112,18 @@ export default function FiltersScreen() {
             </View>
             
             <View style={styles.filterSection}>
-                <Text style={styles.label}>Genre</Text>
+                <Text style={styles.label}>Genres</Text>
                 <TouchableOpacity
                     style={styles.dropdownButton}
                     onPress={() => setShowGenrePicker(true)}
                 >
                     <Text style={[
                         styles.dropdownButtonText,
-                        localFilters.genre && { opacity: 1, fontWeight: '600' }
+                        localFilters.genres.length > 0 && { opacity: 1, fontWeight: '600' }
                     ]}>
-                        {genres.find(g => g.value === localFilters.genre)?.label || "Select Genre"}
+                        {localFilters.genres.length > 0 
+                            ? `${localFilters.genres.length} selected`
+                            : "Select Genres"}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -154,20 +178,19 @@ export default function FiltersScreen() {
                                     key={genre.value}
                                     style={[
                                         styles.modalItem,
-                                        localFilters.genre === genre.value && styles.modalItemSelected
+                                        localFilters.genres.includes(genre.value) && styles.modalItemSelected
                                     ]}
                                     onPress={() => {
-                                        setLocalFilters(prev => ({ ...prev, genre: genre.value }));
-                                        setShowGenrePicker(false);
+                                        toggleGenre(genre.value);
                                     }}
                                 >
                                     <Text style={[
                                         styles.modalItemText,
-                                        localFilters.genre === genre.value && styles.modalItemTextSelected
+                                        localFilters.genres.includes(genre.value) && styles.modalItemTextSelected
                                     ]}>
                                         {genre.label}
                                     </Text>
-                                    {localFilters.genre === genre.value && (
+                                    {localFilters.genres.includes(genre.value) && (
                                         <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
                                     )}
                                 </TouchableOpacity>

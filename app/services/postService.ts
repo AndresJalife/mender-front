@@ -7,13 +7,14 @@ export const postService = {
     getPosts: async (filters: Filters, avoidTmdbIds: number[] = []): Promise<Post[]> => {
         try {
             console.log("avoidImdbIds: ", avoidTmdbIds)
+            console.log("filters: ", filters)
             const response = await getAuthenticatedRequest('/post', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    genre: filters.genre,
+                    genres: filters.genres,
                     min_release_date: filters.min_release_date,
                     max_release_date: filters.max_release_date,
                     min_rating: filters.min_rating,
