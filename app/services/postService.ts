@@ -8,17 +8,25 @@ export const postService = {
         try {
             console.log("avoidImdbIds: ", avoidTmdbIds)
             console.log("filters: ", filters)
+            
+            // Format dates before sending to API
+            const formattedFilters = {
+                ...filters,
+                min_release_date: filters.min_release_date ? `01/01/${filters.min_release_date}` : undefined,
+                max_release_date: filters.max_release_date ? `01/01/${filters.max_release_date}` : undefined,
+            };
+
             const response = await getAuthenticatedRequest('/post', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    genres: filters.genres,
-                    min_release_date: filters.min_release_date,
-                    max_release_date: filters.max_release_date,
-                    min_rating: filters.min_rating,
-                    max_rating: filters.max_rating,
+                    genres: formattedFilters.genres,
+                    min_release_date: formattedFilters.min_release_date,
+                    max_release_date: formattedFilters.max_release_date,
+                    min_rating: formattedFilters.min_rating,
+                    max_rating: formattedFilters.max_rating,
                     avoid_tmdb_ids: avoidTmdbIds
                 })
             });

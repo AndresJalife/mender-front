@@ -56,19 +56,11 @@ export default function FiltersScreen() {
     const handleApplyFilters = () => {
         const filters = {
             genres: localFilters.genres,
-            min_release_date: localFilters.min_release_date ? `01/01/${localFilters.min_release_date}` : undefined,
-            max_release_date: localFilters.max_release_date ? `01/01/${localFilters.max_release_date}` : undefined,
+            min_release_date: localFilters.min_release_date || undefined,
+            max_release_date: localFilters.max_release_date || undefined,
             min_rating: localFilters.min_rating ? parseFloat(localFilters.min_rating) : undefined,
             max_rating: localFilters.max_rating ? parseFloat(localFilters.max_rating) : undefined
         };
-        
-        // Remove any existing date formatting to prevent double prefixing
-        if (filters.min_release_date?.includes('01/01/')) {
-            filters.min_release_date = filters.min_release_date.replace('01/01/', '');
-        }
-        if (filters.max_release_date?.includes('01/01/')) {
-            filters.max_release_date = filters.max_release_date.replace('01/01/', '');
-        }
         
         dispatch(setFilters(filters));
         router.back();
@@ -216,6 +208,24 @@ export default function FiltersScreen() {
                         style={styles.modalContent}
                         onPress={e => e.stopPropagation()}
                     >
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Select Year</Text>
+                            {localFilters.min_release_date && (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setLocalFilters(prev => ({
+                                            ...prev,
+                                            min_release_date: '',
+                                            // Clear max_release_date if it's now invalid
+                                            max_release_date: prev.max_release_date && parseInt(prev.max_release_date) < parseInt(prev.min_release_date) ? '' : prev.max_release_date
+                                        }));
+                                        setShowFromYearPicker(false);
+                                    }}
+                                >
+                                    <Text style={styles.clearText}>Clear</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
                         <ScrollView>
                             {years.map((year) => (
                                 <TouchableOpacity
@@ -266,6 +276,22 @@ export default function FiltersScreen() {
                         style={styles.modalContent}
                         onPress={e => e.stopPropagation()}
                     >
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Select Year</Text>
+                            {localFilters.max_release_date && (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setLocalFilters(prev => ({
+                                            ...prev,
+                                            max_release_date: ''
+                                        }));
+                                        setShowToYearPicker(false);
+                                    }}
+                                >
+                                    <Text style={styles.clearText}>Clear</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
                         <ScrollView>
                             {years
                                 .filter(year => !localFilters.min_release_date || parseInt(localFilters.min_release_date) <= year)
@@ -552,5 +578,23 @@ const styles = StyleSheet.create({
     },
     yearButton: {
         flex: 1,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.surfaceLight,
+    },
+    modalTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: colors.textPrimary,
+    },
+    clearText: {
+        color: colors.textSecondary,
+        fontSize: 15,
     },
 });
