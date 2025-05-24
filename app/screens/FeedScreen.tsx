@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback, useRef, startTransition} from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Post } from '@/app/types/Post';
 import { postService } from '../services/postService';
@@ -12,6 +12,7 @@ import colors from '@/app/constants/colors';
 const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFilterLoading, setIsFilterLoading] = useState(false);
     const filters = useSelector((state: RootState) => state.filter.filters);
     const hasActiveFilters = Object.entries(filters).some(([_, value]) => 
         value !== undefined && value !== '' && value !== null
@@ -57,8 +58,19 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     useEffect(() => {
         if (Object.keys(filters).length > 0) {
             console.log("filters changed")
+            setIsFilterLoading(true);
             setSeenTmdbIds([]);
-            fetchPosts(true);
+            
+            // Create a promise that resolves after 500ms
+            const minLoadingTime = new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Wait for both the fetch and the minimum loading time
+            Promise.all([
+                fetchPosts(true),
+                minLoadingTime
+            ]).finally(() => {
+                setIsFilterLoading(false);
+            });
         }
     }, [filters]);
 
@@ -93,6 +105,11 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
                     </View>
                 )}
             </TouchableOpacity>
+            {isFilterLoading && (
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color="white" />
+                </View>
+            )}
         </View>
     );
 };
@@ -126,6 +143,17 @@ const styles = StyleSheet.create({
         color: colors.textPrimary,
         fontSize: 14,
         fontWeight: 'bold',
+    },
+    loadingOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2,
     },
 });
 
