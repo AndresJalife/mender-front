@@ -15,12 +15,15 @@ import Markdown from 'react-native-markdown-display';
 import { chatService, Message } from '../services/chatService';
 import { colors } from '../constants/colors';
 
+const WELCOME_MESSAGE = "Hey! I'm your movie recommendation chatbot. I can help you discover great films based on your preferences. Just let me know what kind of movies you're interested in!";
+
 const ChatScreen = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showWelcome, setShowWelcome] = useState(false);
     const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
@@ -31,7 +34,20 @@ const ChatScreen = () => {
         try {
             setIsLoading(true);
             const fetched = await chatService.getMessages();
-            setMessages(fetched.slice().reverse());
+            const sortedMessages = fetched.slice().reverse();
+            setMessages(sortedMessages);
+
+            // Check if we should show welcome message
+            if (sortedMessages.length > 0) {
+                const lastMessage = sortedMessages[0];
+                const lastMessageDate = new Date(lastMessage.created_date);
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                setShowWelcome(lastMessageDate < yesterday);
+            } else {
+                setShowWelcome(true);
+            }
         } catch (err) {
             setError('Failed to load messages');
             console.error(err);
@@ -43,10 +59,14 @@ const ChatScreen = () => {
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
+        // Hide welcome message when user sends a message
+        setShowWelcome(false);
+
         const userMessage: Message = {
             message: newMessage,
             bot_made: false,
             order: messages.length + 1,
+            created_date: new Date().toISOString(),
         };
 
         // Optimistically add user message
@@ -69,6 +89,17 @@ const ChatScreen = () => {
         } finally {
             setIsTyping(false);
         }
+    };
+
+    const renderWelcomeMessage = () => {
+        if (!showWelcome) return null;
+        return (
+            <View style={[styles.messageContainer, styles.botMessage, styles.welcomeContainer]}>
+                <Markdown style={markdownStyles}>
+                    {WELCOME_MESSAGE}
+                </Markdown>
+            </View>
+        );
     };
 
     const renderMessage = ({ item }: { item: Message }) => (
@@ -122,6 +153,7 @@ const ChatScreen = () => {
                 contentContainerStyle={styles.messagesList}
                 maintainVisibleContentPosition={{minIndexForVisible: 0}}
                 ListHeaderComponent={renderTypingIndicator}
+                ListFooterComponent={renderWelcomeMessage}
             />
             {error && (
                 <Text style={styles.errorText}>{error}</Text>
@@ -240,6 +272,10 @@ const styles = StyleSheet.create({
         marginLeft: 8,
         color: colors.textSecondary,
         fontSize: 14,
+    },
+    welcomeContainer: {
+        backgroundColor: colors.surfaceLight,
+        marginBottom: 16,
     },
 });
 

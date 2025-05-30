@@ -4,6 +4,7 @@ export interface Message {
     bot_made: boolean;
     order: number;
     message: string;
+    created_date: string;  // ISO datetime string
 }
 
 export const chatService = {
