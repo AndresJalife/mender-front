@@ -16,14 +16,6 @@ const filterSlice = createSlice({
         setFilters: (state, action: PayloadAction<Filters>) => {
             const filters = { ...action.payload };
             
-            // // Format dates if they exist and aren't already formatted
-            // if (filters.min_release_date && !filters.min_release_date.includes('/')) {
-            //     filters.min_release_date = `01/01/${filters.min_release_date}`;
-            // }
-            // if (filters.max_release_date && !filters.max_release_date.includes('/')) {
-            //     filters.max_release_date = `01/01/${filters.max_release_date}`;
-            // }
-            
             state.filters = filters;
         },
         clearFilters: (state) => {

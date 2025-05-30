@@ -9,7 +9,7 @@ export interface Message {
 export const chatService = {
     getMessages: async (): Promise<Message[]> => {
         try {
-            const response = await getAuthenticatedRequest('/chat/');
+            const response = await getAuthenticatedRequest('/chat');
 
             if (!response?.ok) {
                 throw new Error('Failed to fetch messages');
@@ -34,6 +34,17 @@ export const chatService = {
         } catch (error) {
             console.error('Error sending message:', error);
             throw error;
+        }
+    },
+
+    getLatestMessage: async (): Promise<Message | null> => {
+        try {
+            const messages = await chatService.getMessages();
+            const botMessages = messages.filter(m => m.bot_made);
+            return botMessages.length > 0 ? botMessages[botMessages.length - 1] : null;
+        } catch (error) {
+            console.error('Error getting latest message:', error);
+            return null;
         }
     },
 }; 

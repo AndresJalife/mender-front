@@ -10,13 +10,15 @@ import Animated, {
 const { width } = Dimensions.get('window');
 const LINE_WIDTH = width * 0.7;
 
+const DURATION = 3000; // Total duration for the loading animation
+
 const LoadingScreen = ({ onLoadingComplete }: { onLoadingComplete: () => void }) => {
   const progress = useSharedValue(0);
   const opacity = useSharedValue(1);
 
   useEffect(() => {
     // Animate the line from left to right
-    progress.value = withTiming(1, { duration: 5000 });
+    progress.value = withTiming(1, { duration: DURATION });
 
     // Fade out the loading screen
     opacity.value = withSequence(

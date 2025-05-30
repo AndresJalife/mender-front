@@ -9,7 +9,9 @@ import {
     KeyboardAvoidingView,
     Platform,
     ActivityIndicator,
+    TextStyle,
 } from 'react-native';
+import Markdown from 'react-native-markdown-display';
 import { chatService, Message } from '../services/chatService';
 import { colors } from '../constants/colors';
 
@@ -17,6 +19,7 @@ const ChatScreen = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [isTyping, setIsTyping] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const flatListRef = useRef<FlatList>(null);
 
@@ -28,7 +31,6 @@ const ChatScreen = () => {
         try {
             setIsLoading(true);
             const fetched = await chatService.getMessages();
-            // fetched is oldest→newest — make a copy, flip it once
             setMessages(fetched.slice().reverse());
         } catch (err) {
             setError('Failed to load messages');
@@ -41,13 +43,31 @@ const ChatScreen = () => {
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
+        const userMessage: Message = {
+            message: newMessage,
+            bot_made: false,
+            order: messages.length + 1,
+        };
+
+        // Optimistically add user message
+        setMessages(prev => [userMessage, ...prev]);
+        setNewMessage('');
+        setIsTyping(true);
+
         try {
+            // Send message to service
             await chatService.sendMessage(newMessage);
-            setNewMessage('');
-            loadMessages(); // Reload messages to get the updated list
+            
+            // Get the bot's response
+            const botResponse = await chatService.getLatestMessage();
+            if (botResponse) {
+                setMessages(prev => [botResponse, ...prev]);
+            }
         } catch (err) {
             setError('Failed to send message');
             console.error(err);
+        } finally {
+            setIsTyping(false);
         }
     };
 
@@ -56,9 +76,27 @@ const ChatScreen = () => {
             styles.messageContainer,
             item.bot_made ? styles.botMessage : styles.userMessage
         ]}>
-            <Text style={styles.messageText}>{item.message}</Text>
+            {item.bot_made ? (
+                <Markdown style={markdownStyles}>
+                    {item.message}
+                </Markdown>
+            ) : (
+                <Text style={styles.messageText}>{item.message}</Text>
+            )}
         </View>
     );
+
+    const renderTypingIndicator = () => {
+        if (!isTyping) return null;
+        return (
+            <View style={[styles.messageContainer, styles.botMessage, styles.typingContainer]}>
+                <View style={styles.typingIndicator}>
+                    <ActivityIndicator size="small" color={colors.textSecondary} />
+                    <Text style={styles.typingText}>Bot is typing...</Text>
+                </View>
+            </View>
+        );
+    };
 
     if (isLoading) {
         return (
@@ -78,11 +116,12 @@ const ChatScreen = () => {
             </View>
             <FlatList
                 ref={flatListRef}
-                data={messages}                         // already newest→oldest
-                inverted                                // draws index 0 at the bottom
+                data={messages}
+                inverted
                 renderItem={renderMessage}
                 contentContainerStyle={styles.messagesList}
-                maintainVisibleContentPosition={{minIndexForVisible: 0}}  // 👈 keeps it “stuck” to the bottom
+                maintainVisibleContentPosition={{minIndexForVisible: 0}}
+                ListHeaderComponent={renderTypingIndicator}
             />
             {error && (
                 <Text style={styles.errorText}>{error}</Text>
@@ -99,7 +138,7 @@ const ChatScreen = () => {
                 <TouchableOpacity 
                     style={styles.sendButton}
                     onPress={handleSendMessage}
-                    disabled={!newMessage.trim()}
+                    disabled={!newMessage.trim() || isTyping}
                 >
                     <Text style={styles.sendButtonText}>Send</Text>
                 </TouchableOpacity>
@@ -190,6 +229,76 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 8,
     },
+    typingContainer: {
+        padding: 8,
+    },
+    typingIndicator: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    typingText: {
+        marginLeft: 8,
+        color: colors.textSecondary,
+        fontSize: 14,
+    },
 });
+
+const markdownStyles = {
+    body: {
+        color: colors.textSecondary,
+        fontSize: 16,
+    },
+    heading1: {
+        color: colors.textPrimary,
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    heading2: {
+        color: colors.textPrimary,
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    heading3: {
+        color: colors.textPrimary,
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 6,
+    },
+    paragraph: {
+        marginBottom: 8,
+    },
+    list_item: {
+        marginBottom: 4,
+    },
+    strong: {
+        fontWeight: 'bold' as const,
+    },
+    em: {
+        fontStyle: 'italic',
+    },
+    link: {
+        color: colors.textPrimary,
+    },
+    blockquote: {
+        borderLeftWidth: 4,
+        borderLeftColor: colors.border,
+        paddingLeft: 8,
+        marginLeft: 0,
+        marginBottom: 8,
+    },
+    code_inline: {
+        backgroundColor: colors.surfaceLight,
+        padding: 2,
+        borderRadius: 4,
+    },
+    code_block: {
+        backgroundColor: colors.surfaceLight,
+        padding: 8,
+        borderRadius: 4,
+        marginBottom: 8,
+    },
+} as const;
 
 export default ChatScreen;
