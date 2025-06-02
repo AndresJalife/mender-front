@@ -7,11 +7,13 @@ import { ProfileScreen } from "@/app/screens/ProfileScreen";
 import SearchScreen from "@/app/screens/SearchScreen";
 import { Post } from "@/app/types/Post";
 import FeedScreen from '../screens/FeedScreen';
+import LoadingScreen from "@/app/screens/LoadingScreen";
 // @ts-ignore
 // eslint-disable-next-line no-console
 LogBox.ignoreLogs(['Warning: A props object containing a "key" prop']);
 
 const BottomNavigation = () => {
+
     const [routes] = useState([
         { key: 'home', title: 'Home', focusedIcon: 'home' },
         { key: 'search', title: 'Search', focusedIcon: 'magnify' },

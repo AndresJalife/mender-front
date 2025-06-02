@@ -15,12 +15,10 @@ configureReanimatedLogger({
 });
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <MainScreen />
-      {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
     </GestureHandlerRootView>
   );
 }
