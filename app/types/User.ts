@@ -1,10 +1,14 @@
+import { Countries, UserSex } from './enums';
 
-interface User {
-    id: number;
-    email: string;
-    name: string;
-    username: string;
-    password: string;
-  }
-
-export default User; 
+export interface User {
+    user_id?: number;
+    email?: string;
+    password?: string;
+    name?: string;
+    username?: string;
+    country?: Countries;
+    new?: boolean;
+    sex?: UserSex;
+    created_date?: string;
+    uid?: string;
+} 
