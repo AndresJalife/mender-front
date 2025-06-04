@@ -20,11 +20,16 @@ export const ProfileScreen = () => {
     const [showSexPicker, setShowSexPicker] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [formData, setFormData] = useState({
-        name: user?.name || '',
-        username: user?.username || '',
-        country: user?.country || Countries.UNKNOWN,
-        sex: user?.sex || UserSex.UNKNOWN,
+        name: '',
+        username: '',
+        country: '',
+        sex: UserSex.UNKNOWN,
     });
+
+    const getCountryLabel = (value: string): string => {
+        const country = Countries.find(c => c.value === value);
+        return country?.label || 'Select Country';
+    };
 
     if (!isAuthenticated) {
         return (
@@ -132,9 +137,9 @@ export const ProfileScreen = () => {
                     >
                         <Text style={[
                             styles.dropdownButtonText,
-                            formData.country !== Countries.UNKNOWN && { opacity: 1, fontWeight: '600' }
+                            formData.country && { opacity: 1, fontWeight: '600' }
                         ]}>
-                            {formData.country}
+                            {getCountryLabel(formData.country)}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -193,25 +198,25 @@ export const ProfileScreen = () => {
                         onPress={e => e.stopPropagation()}
                     >
                         <ScrollView>
-                            {Object.values(Countries).map((country) => (
+                            {Countries.map((country) => (
                                 <TouchableOpacity
-                                    key={country}
+                                    key={country.value}
                                     style={[
                                         styles.modalItem,
-                                        formData.country === country && styles.modalItemSelected
+                                        formData.country === country.value && styles.modalItemSelected
                                     ]}
                                     onPress={() => {
-                                        handleInputChange('country', country);
+                                        handleInputChange('country', country.value);
                                         setShowCountryPicker(false);
                                     }}
                                 >
                                     <Text style={[
                                         styles.modalItemText,
-                                        formData.country === country && styles.modalItemTextSelected
+                                        formData.country === country.value && styles.modalItemTextSelected
                                     ]}>
-                                        {country}
+                                        {country.label}
                                     </Text>
-                                    {formData.country === country && (
+                                    {formData.country === country.value && (
                                         <Ionicons name="checkmark" size={24} color={colors.textPrimary} />
                                     )}
                                 </TouchableOpacity>

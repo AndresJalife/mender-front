@@ -15,7 +15,6 @@ import Markdown from 'react-native-markdown-display';
 import { chatService, Message } from '../services/chatService';
 import { colors } from '../constants/colors';
 
-const WELCOME_MESSAGE = "Hey! I'm your movie recommendation chatbot. I can help you discover great films based on your preferences. Just let me know what kind of movies you're interested in!";
 
 const ChatScreen = () => {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -35,19 +34,29 @@ const ChatScreen = () => {
             setIsLoading(true);
             const fetched = await chatService.getMessages();
             const sortedMessages = fetched.slice().reverse();
-            setMessages(sortedMessages);
 
             // Check if we should show welcome message
             if (sortedMessages.length > 0) {
                 const lastMessage = sortedMessages[0];
-                const lastMessageDate = new Date(lastMessage.created_date);
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                
-                setShowWelcome(lastMessageDate < yesterday);
+                const [day, month, year, hour, minute, second] = lastMessage.created_date.split(/[\/ :]/).map(Number);
+                const lastMessageDate = new Date(year, month - 1, day, hour, minute, second);                console.log(lastMessageDate)
+
+                const todayMidnight = new Date();
+                todayMidnight.setHours(0, 0, 0, 0);
+
+                const startOfYesterday = new Date(todayMidnight);
+                startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+
+                setShowWelcome(lastMessageDate < startOfYesterday);
             } else {
                 setShowWelcome(true);
             }
+            if (showWelcome) {
+                setMessages([getWelcomeMessage()]);
+            } else {
+                setMessages(sortedMessages);
+            }
+
         } catch (err) {
             setError('Failed to load messages');
             console.error(err);
@@ -91,16 +100,14 @@ const ChatScreen = () => {
         }
     };
 
-    const renderWelcomeMessage = () => {
-        if (!showWelcome) return null;
-        return (
-            <View style={[styles.messageContainer, styles.botMessage, styles.welcomeContainer]}>
-                <Markdown style={markdownStyles}>
-                    {WELCOME_MESSAGE}
-                </Markdown>
-            </View>
-        );
-    };
+    const getWelcomeMessage = () => {
+        return {
+            message: "¡Hola! Soy tu chatbot de recomendaciones de películas. Puedo ayudarte a descubrir grandes películas basadas en tus preferencias. ¡Solo dime qué tipo de películas te interesan!",
+            bot_made: true,
+            order: 0, // This will be the first message
+            created_date: new Date().toISOString(),
+        }
+    }
 
     const renderMessage = ({ item }: { item: Message }) => (
         <View style={[
@@ -153,7 +160,6 @@ const ChatScreen = () => {
                 contentContainerStyle={styles.messagesList}
                 maintainVisibleContentPosition={{minIndexForVisible: 0}}
                 ListHeaderComponent={renderTypingIndicator}
-                ListFooterComponent={renderWelcomeMessage}
             />
             {error && (
                 <Text style={styles.errorText}>{error}</Text>

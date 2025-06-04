@@ -30,6 +30,20 @@ export default function SignupScreen() {
 
     const countries = [
         { label: "Argentina", value: "ar" },
+        { label: "United States", value: "us" },
+        { label: "Canada", value: "ca" },
+        { label: "United Kingdom", value: "uk" },
+        { label: "Australia", value: "au" },
+        { label: "New Zealand", value: "nz" },
+        { label: "South Africa", value: "za" },
+        { label: "India", value: "in" },
+        { label: "Brazil", value: "br" },
+        { label: "Mexico", value: "mx" },
+        { label: "Argentina", value: "ar" },
+        { label: "Chile", value: "cl" },
+        { label: "Colombia", value: "co" },
+        { label: "Peru", value: "pe" },
+        { label: "Venezuela", value: "ve" },
     ];
 
     const sexes = [

@@ -1,6 +1,7 @@
 import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 import { loginSuccess } from '../store/auth';
 import { store } from '../store/store'; // Make sure to export store instance
+import { UserSex } from '../types/enums';
 
 interface LoginCredentials {
     email: string;
@@ -25,6 +26,17 @@ interface LoginResponse {
     username: string;
 }
 
+interface UserResponse {
+    user_id: number;
+    email: string;
+    name: string;
+    username: string;
+    country: string;
+    sex: UserSex;
+    created_date: string;
+    uid: string;
+}
+
 interface SignupResponse {
     message?: string;
     success: boolean;
@@ -45,14 +57,33 @@ export const loginService = {
             const data: LoginResponse = await response.json();
             
             if (data.token) {
-                // Dispatch login success action to Redux store
+                // Fetch complete user information
+                const userResponse = await fetch(`http://143.244.190.174:8443/user/${data.user_id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${data.token}`,
+                    },
+                });
+
+                if (!userResponse.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+
+                console.log('userResponse', userResponse);
+                
+                const userData: UserResponse = await userResponse.json();
+
+                // Dispatch login success action to Redux store with complete user data
                 store.dispatch(loginSuccess({
                     token: data.token,
                     user: {
-                        id: data.user_id, // You might want to get these from the API
-                        email: data.email,
-                        name: data.name,
-                        username: data.username,
+                        user_id: userData.user_id,
+                        email: userData.email,
+                        name: userData.name,
+                        username: userData.username,
+                        country: userData.country,
+                        sex: userData.sex,
+                        created_date: userData.created_date,
+                        uid: userData.uid,
                         password: credentials.password
                     }
                 }));

@@ -1,4 +1,4 @@
-import User from '@/app/types/User';
+import { User } from '@/app/types/User';
 
 export interface RootState {
     auth: {
