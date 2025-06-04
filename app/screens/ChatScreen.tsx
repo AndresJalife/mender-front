@@ -9,7 +9,6 @@ import {
     KeyboardAvoidingView,
     Platform,
     ActivityIndicator,
-    TextStyle,
 } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { chatService, Message } from '../services/chatService';
@@ -22,7 +21,6 @@ const ChatScreen = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [showWelcome, setShowWelcome] = useState(false);
     const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
@@ -35,26 +33,24 @@ const ChatScreen = () => {
             const fetched = await chatService.getMessages();
             const sortedMessages = fetched.slice().reverse();
 
-            // Check if we should show welcome message
-            if (sortedMessages.length > 0) {
-                const lastMessage = sortedMessages[0];
-                const [day, month, year, hour, minute, second] = lastMessage.created_date.split(/[\/ :]/).map(Number);
-                const lastMessageDate = new Date(year, month - 1, day, hour, minute, second);                console.log(lastMessageDate)
+            // Get yesterday's date at midnight
+            const todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+            const startOfYesterday = new Date(todayMidnight);
+            startOfYesterday.setDate(startOfYesterday.getDate() - 1);
 
-                const todayMidnight = new Date();
-                todayMidnight.setHours(0, 0, 0, 0);
+            // Filter messages from yesterday onwards
+            const recentMessages = sortedMessages.filter(message => {
+                const [day, month, year, hour, minute, second] = message.created_date.split(/[\/ :]/).map(Number);
+                const messageDate = new Date(year, month - 1, day, hour, minute, second);
+                return messageDate >= startOfYesterday;
+            });
 
-                const startOfYesterday = new Date(todayMidnight);
-                startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-
-                setShowWelcome(lastMessageDate < startOfYesterday);
-            } else {
-                setShowWelcome(true);
-            }
-            if (showWelcome) {
+            // Show welcome message if there are no recent messages
+            if (recentMessages.length === 0) {
                 setMessages([getWelcomeMessage()]);
             } else {
-                setMessages(sortedMessages);
+                setMessages(recentMessages);
             }
 
         } catch (err) {
@@ -67,9 +63,6 @@ const ChatScreen = () => {
 
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
-
-        // Hide welcome message when user sends a message
-        setShowWelcome(false);
 
         const userMessage: Message = {
             message: newMessage,
