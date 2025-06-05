@@ -69,7 +69,7 @@ const SearchScreen = () => {
     };
 
     const handleResultPress = (item: Post) => {
-        console.log('Navigating to item:', item.entity?.image_key);
+        console.log('Navigating to item:', item.entity?.poster_key);
         router.push(`/screens/ItemScreen?id=${item.post_id}`);
     };
 
@@ -84,9 +84,9 @@ const SearchScreen = () => {
             onPress={() => handleResultPress(item)}
         >
             <View style={styles.imageContainer}>
-                {item.entity?.image_key && (
+                {item.entity?.poster_key && (
                     <Image 
-                        source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.image_key}` }}
+                        source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.poster_key}` }}
                         style={styles.resultImage}
                         resizeMode="cover"
                     />
@@ -114,9 +114,9 @@ const SearchScreen = () => {
             style={styles.recommendationItem}
             onPress={() => handleResultPress(item)}
         >
-            {item.entity?.image_key && (
+            {item.entity?.poster_key && (
                 <Image
-                    source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.image_key}` }}
+                    source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.poster_key}` }}
                     style={styles.recommendationImage}
                 />
             )}

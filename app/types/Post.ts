@@ -35,12 +35,14 @@ export interface Entity {
     trailer?: string;
     director?: string;
     image_key?: string;
+    poster_key?: string;
     genres?: Genre[];
     actors?: Actor[];
     production_companies?: ProductionCompany[];
     watch_providers?: WatchProvider[];
     rating?: number;
     original_language?: string;
+    trailer_url?: string;
 }
 
 export interface UserPostInfo {

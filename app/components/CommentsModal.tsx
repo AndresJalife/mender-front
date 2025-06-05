@@ -24,9 +24,10 @@ interface Props {
     postId: number;
     visible: boolean;
     onClose: () => void;
+    onCommentAdded?: () => void;
 }
 
-const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
+const CommentsModal: React.FC<Props> = ({ postId, visible, onClose, onCommentAdded }) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [newComment, setNewComment] = useState('');
@@ -73,6 +74,7 @@ const CommentsModal: React.FC<Props> = ({ postId, visible, onClose }) => {
             setComments(prev => [comment, ...prev]);
             setNewComment('');
             Keyboard.dismiss();
+            onCommentAdded?.();
         } catch (error) {
             console.error('Error creating comment:', error);
         } finally {

@@ -18,6 +18,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
     const [showComments, setShowComments] = React.useState(false);
     const [liked, setLiked] = React.useState(data.user_post_info?.liked || false);
     const [seen, setSeen] = React.useState(data.user_post_info?.seen || false);
+    const [commentCount, setCommentCount] = React.useState(data.comments || 0);
     const [commentText, setCommentText] = React.useState<string>(''); // State for comment input
 
     const handleLike = async () => {
@@ -63,6 +64,11 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
         }
     };
 
+    const handleCommentAdded = () => {
+        setCommentCount(prev => prev + 1);
+        data.comments = (data.comments || 0) + 1;
+    };
+
     const handleViewDetails = () => {
         if (data.post_id) {
             router.push(`/screens/ItemScreen?id=${data.post_id}`);
@@ -105,7 +111,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                     onPress={() => setShowComments(true)}
                 >
                     <Ionicons name="chatbubble-outline" size={24} color="#ffffff" />
-                    <Text style={styles.actionButtonText}>{data.comments || 0}</Text>
+                    <Text style={styles.actionButtonText}>{commentCount}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton}>
                     <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
@@ -152,6 +158,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                     postId={data.post_id}
                     visible={showComments}
                     onClose={() => setShowComments(false)}
+                    onCommentAdded={handleCommentAdded}
                 />
             )}
         </View>

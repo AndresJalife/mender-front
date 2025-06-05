@@ -36,12 +36,6 @@ export const postService = {
             }
 
             const data = await response.json();
-
-            for (const post of data) {
-                if (post.entity) {
-                    post.entity.image_key = `ldFX26JW3fusyMewRoWoXYWaffw.jpg`;
-                }
-            }
             
             // Log all post IDs received
             console.log('Received post IDs:', data.map((post: Post) => post.post_id));
@@ -59,10 +53,6 @@ export const postService = {
                 throw new Error('Failed to fetch post');
             }
             const data = await response.json();
-            
-            if (data.entity) {
-                data.entity.image_key = `ldFX26JW3fusyMewRoWoXYWaffw.jpg`;
-            }
             
             return data as Post;
         } catch (error) {

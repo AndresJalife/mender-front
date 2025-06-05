@@ -14,6 +14,10 @@ import { colors } from '../constants/colors';
 import { Post } from '../types/Post';
 import postService from '../services/postService';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import VideoPlayer from '../components/carousel/VideoPlayer';
+import CommentsModal from '../components/CommentsModal';
+import { getProviderIcon } from '../utils/providerIcons';
 
 const ItemScreen = () => {
     const { id } = useLocalSearchParams();
@@ -22,6 +26,8 @@ const ItemScreen = () => {
     const [error, setError] = useState<string | null>(null);
     const [liked, setLiked] = useState(false);
     const [seen, setSeen] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [commentCount, setCommentCount] = useState(0);
 
     useEffect(() => {
         loadPost();
@@ -35,6 +41,7 @@ const ItemScreen = () => {
             setPost(data);
             setLiked(data.user_post_info?.liked || false);
             setSeen(data.user_post_info?.seen || false);
+            setCommentCount(data.comments || 0);
         } catch (err) {
             setError('Failed to load post');
             console.error(err);
@@ -86,6 +93,10 @@ const ItemScreen = () => {
         }
     };
 
+    const handleCommentAdded = () => {
+        setCommentCount(prev => prev + 1);
+    };
+
     if (isLoading) {
         return (
             <View style={styles.container}>
@@ -125,7 +136,13 @@ const ItemScreen = () => {
                         source={{ uri: `https://image.tmdb.org/t/p/w500/${post.entity.image_key}` }}
                         style={styles.trailerBackground}
                     >
-                        <View style={styles.overlay} />
+                        <LinearGradient
+                            colors={['transparent', 'rgba(0,0,0,0.4)', colors.background]}
+                            locations={[0.3, 0.7, 1]}
+                            style={styles.gradient}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0, y: 1 }}
+                        />
                     </ImageBackground>
                 )}
             </View>
@@ -137,19 +154,14 @@ const ItemScreen = () => {
                         <View style={styles.details}>
                             <Text style={styles.year}>
                                 {post.entity?.release_date ? post.entity.release_date.split('/')[2] : ''}
+                                {post.entity?.director && ` - ${post.entity.director}`}
                             </Text>
-                            {post.entity?.director && (
-                                <Text style={styles.director}>
-                                    <Text style={styles.directorLabel}>Directed by </Text>
-                                    <Text style={styles.directorName}>{post.entity.director}</Text>
-                                </Text>
-                            )}
                         </View>
                     </View>
-                    {post.entity?.image_key && (
+                    {post.entity?.poster_key && (
                         <View style={styles.posterContainer}>
                             <Image 
-                                source={{ uri: `https://image.tmdb.org/t/p/w500/${post.entity.image_key}` }}
+                                source={{ uri: `https://image.tmdb.org/t/p/w500/${post.entity.poster_key}` }}
                                 style={styles.poster}
                                 resizeMode="cover"
                             />
@@ -196,14 +208,14 @@ const ItemScreen = () => {
 
                     <TouchableOpacity 
                         style={styles.actionButton}
-                        onPress={() => {/* TODO: Implement comment functionality */}}
+                        onPress={() => setShowComments(true)}
                     >
                         <Ionicons 
                             name="chatbubble-outline" 
                             size={24} 
                             color={colors.textPrimary} 
                         />
-                        <Text style={styles.actionButtonText}>{post.comments || 0}</Text>
+                        <Text style={styles.actionButtonText}>{commentCount}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -213,79 +225,112 @@ const ItemScreen = () => {
                     </View>
                 )}
 
-                {post.entity?.watch_providers && post.entity.watch_providers.length > 0 && (
+                {post.entity?.genres && post.entity.genres.length > 0 && (
                     <View style={styles.providersContainer}>
-                        <Text style={styles.providersTitle}>Available on</Text>
+                        <Text style={styles.providersTitle}>Genres</Text>
                         <View style={styles.providersList}>
-                            {post.entity.watch_providers.map((provider, index) => (
+                            {post.entity.genres.map((genre, index) => (
                                 <View key={index} style={styles.providerItem}>
-                                    <Text style={styles.providerText}>{provider.provider_name}</Text>
+                                    <Text style={styles.providerText}>{genre.name}</Text>
                                 </View>
                             ))}
                         </View>
                     </View>
                 )}
 
-                <View style={styles.detailsContainer}>
-                    {post.entity?.genres && post.entity.genres.length > 0 && (
-                        <View style={styles.detailSection}>
-                            <Text style={styles.detailTitle}>Genres</Text>
-                            <View style={styles.detailContent}>
-                                {post.entity.genres.map((genre, index) => (
-                                    <View key={index} style={styles.genreItem}>
-                                        <Text style={styles.genreText}>{genre.name}</Text>
-                                    </View>
-                                ))}
-                            </View>
-                        </View>
-                    )}
+                {post.entity?.trailer && (
+                    <View style={styles.videoContainer}>
+                        <VideoPlayer 
+                            url={post.entity.trailer}
+                            isHomeTab={false}
+                        />
+                    </View>
+                )}
 
-                    {post.entity?.production_companies && post.entity.production_companies.length > 0 && (
-                        <View style={styles.detailSection}>
-                            <Text style={styles.detailTitle}>Production Companies</Text>
-                            <View style={styles.detailContent}>
-                                {post.entity.production_companies.map((company, index) => (
-                                    <Text key={index} style={styles.detailText}>{company.name}</Text>
-                                ))}
-                            </View>
+                <View style={styles.providersContainer}>
+                    <Text style={styles.providersTitle}>Available on</Text>
+                    {post.entity?.watch_providers && post.entity.watch_providers.length > 0 ? (
+                        <View style={styles.providersList}>
+                            {post.entity.watch_providers.map((provider, index) => {
+                                const iconUrl = getProviderIcon(provider.provider_name);
+                                return iconUrl ? (
+                                    <Image 
+                                        key={index}
+                                        source={{ uri: iconUrl }} 
+                                        style={styles.providerIcon}
+                                        resizeMode="contain"
+                                    />
+                                ) : (
+                                    <Text key={index} style={styles.providerText}>{provider.provider_name}</Text>
+                                );
+                            })}
                         </View>
-                    )}
-
-                    {post.entity?.runtime && (
-                        <View style={styles.detailSection}>
-                            <Text style={styles.detailTitle}>Runtime</Text>
-                            <Text style={styles.detailText}>{post.entity.runtime} minutes</Text>
-                        </View>
-                    )}
-
-                    {post.entity?.budget && (
-                        <View style={styles.detailSection}>
-                            <Text style={styles.detailTitle}>Budget</Text>
-                            <Text style={styles.detailText}>
-                                ${post.entity.budget.toLocaleString()}
-                            </Text>
-                        </View>
-                    )}
-
-                    {post.entity?.revenue && (
-                        <View style={styles.detailSection}>
-                            <Text style={styles.detailTitle}>Revenue</Text>
-                            <Text style={styles.detailText}>
-                                ${post.entity.revenue.toLocaleString()}
-                            </Text>
-                        </View>
-                    )}
-
-                    {post.entity?.vote_average && (
-                        <View style={styles.detailSection}>
-                            <Text style={styles.detailTitle}>Rating</Text>
-                            <Text style={styles.detailText}>
-                                {post.entity.vote_average.toFixed(1)}/10
-                            </Text>
-                        </View>
+                    ) : (
+                        <Text style={styles.noProvidersText}>Not currently available in your region</Text>
                     )}
                 </View>
+
+                <View style={styles.detailsContainer}>
+                    <View style={styles.detailsColumns}>
+                        <View style={styles.detailsColumn}>
+                            {post.entity?.runtime && (
+                                <View style={styles.detailSection}>
+                                    <Text style={styles.detailTitle}>Runtime</Text>
+                                    <Text style={styles.detailText}>{post.entity.runtime} minutes</Text>
+                                </View>
+                            )}
+
+                            {post.entity?.budget && (
+                                <View style={styles.detailSection}>
+                                    <Text style={styles.detailTitle}>Budget</Text>
+                                    <Text style={styles.detailText}>
+                                        ${post.entity.budget.toLocaleString()}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+
+                        <View style={styles.detailsColumn}>
+                            {post.entity?.production_companies && post.entity.production_companies.length > 0 && (
+                                <View style={styles.detailSection}>
+                                    <Text style={styles.detailTitle}>Production Companies</Text>
+                                    <View style={styles.detailContent}>
+                                        {post.entity.production_companies.map((company, index) => (
+                                            <Text key={index} style={styles.detailText}>{company.name}</Text>
+                                        ))}
+                                    </View>
+                                </View>
+                            )}
+
+                            {post.entity?.revenue && (
+                                <View style={styles.detailSection}>
+                                    <Text style={styles.detailTitle}>Revenue</Text>
+                                    <Text style={styles.detailText}>
+                                        ${post.entity.revenue.toLocaleString()}
+                                    </Text>
+                                </View>
+                            )}
+
+                            {post.entity?.vote_average && (
+                                <View style={styles.detailSection}>
+                                    <Text style={styles.detailTitle}>Rating</Text>
+                                    <Text style={styles.detailText}>
+                                        {post.entity.vote_average.toFixed(1)}/10
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+                </View>
             </View>
+            {post.post_id && (
+                <CommentsModal
+                    postId={post.post_id}
+                    visible={showComments}
+                    onClose={() => setShowComments(false)}
+                    onCommentAdded={handleCommentAdded}
+                />
+            )}
         </ScrollView>
     );
 };
@@ -316,9 +361,12 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    gradient: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
     },
     content: {
         padding: 16,
@@ -328,7 +376,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 24,
+        marginBottom: 0,
     },
     titleContent: {
         flex: 1,
@@ -343,21 +391,10 @@ const styles = StyleSheet.create({
     details: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 8,
     },
     year: {
-        fontSize: 16,
-        color: colors.textMuted,
-        marginRight: 12,
-    },
-    director: {
-        fontSize: 16,
-        color: colors.textMuted,
-    },
-    directorLabel: {
-        color: colors.textMuted,
-    },
-    directorName: {
-        fontWeight: '600',
+        fontSize: 18,
         color: colors.textMuted,
     },
     posterContainer: {
@@ -365,6 +402,7 @@ const styles = StyleSheet.create({
         height: 150,
         borderRadius: 8,
         overflow: 'hidden',
+        position: 'relative',
     },
     poster: {
         width: '100%',
@@ -408,11 +446,14 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: colors.textPrimary,
         marginBottom: 12,
+        textAlign: 'center',
     },
     providersList: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
+        gap: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     providerItem: {
         backgroundColor: colors.surfaceLight,
@@ -421,10 +462,19 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.1)',
+        height: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    providerIcon: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
     },
     providerText: {
         color: colors.textSecondary,
         fontSize: 14,
+        textAlign: 'center',
     },
     detailsContainer: {
         backgroundColor: colors.surface,
@@ -432,6 +482,13 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginTop: 16,
         marginBottom: 32,
+    },
+    detailsColumns: {
+        flexDirection: 'row',
+        gap: 24,
+    },
+    detailsColumn: {
+        flex: 1,
     },
     detailSection: {
         marginBottom: 16,
@@ -452,18 +509,6 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
         lineHeight: 22,
     },
-    genreItem: {
-        backgroundColor: colors.surfaceLight,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-    },
-    genreText: {
-        color: colors.textSecondary,
-        fontSize: 14,
-    },
     actionButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -472,7 +517,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.surface,
         borderRadius: 12,
         marginTop: 16,
-        marginBottom: 16,
+        marginBottom: 0,
     },
     actionButton: {
         flexDirection: 'row',
@@ -485,6 +530,23 @@ const styles = StyleSheet.create({
     },
     likedText: {
         color: '#ff4d4d',
+    },
+    videoContainer: {
+        backgroundColor: colors.surface,
+        borderRadius: 12,
+        marginTop: 16,
+        overflow: 'hidden',
+    },
+    video: {
+        width: '100%',
+        aspectRatio: 16/9,
+    },
+    noProvidersText: {
+        color: colors.textMuted,
+        fontSize: 14,
+        fontStyle: 'italic',
+        marginTop: 8,
+        textAlign: 'center',
     },
 });
 
