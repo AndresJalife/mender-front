@@ -6,14 +6,12 @@ import {
     Text,
     ActivityIndicator,
     TouchableOpacity,
-    TextInput,
-    KeyboardAvoidingView,
-    Platform,
+    Image,
+    ImageBackground,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { colors } from '../constants/colors';
-import { Post, Genre, Actor, ProductionCompany, WatchProvider } from '../types/Post';
-import { getAuthenticatedRequest } from '../services/apiService';
+import { Post } from '../types/Post';
 import postService from '../services/postService';
 
 const ItemScreen = () => {
@@ -21,9 +19,6 @@ const ItemScreen = () => {
     const [post, setPost] = useState<Post | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [liked, setLiked] = useState<boolean>(false);
-    const [seen, setSeen] = useState<boolean>(false);
-    const [commentText, setCommentText] = useState<string>('');
 
     useEffect(() => {
         loadPost();
@@ -33,70 +28,13 @@ const ItemScreen = () => {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await getAuthenticatedRequest(`/post/${id}`);
-            if (!response) throw new Error('Failed to fetch post');
-            
-            const data = await response.json();
+            const data = await postService.getPost(Number(id));
             setPost(data);
-            setLiked(data.user_post_info?.liked || false);
-            setSeen(data.user_post_info?.seen || false);
         } catch (err) {
             setError('Failed to load post');
             console.error(err);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const handleLike = async () => {
-        if (post?.post_id) {
-            try {
-                await postService.likePost(post.post_id);
-                setLiked(!liked);
-                setPost((prevPost) => prevPost ? {
-                    ...prevPost,
-                    likes: (prevPost.likes || 0) + (liked ? -1 : 1),
-                    user_post_info: {
-                        ...prevPost.user_post_info,
-                        liked: !liked,
-                    },
-                } : prevPost);
-            } catch (error) {
-                console.error('Error liking post:', error);
-            }
-        }
-    };
-
-    const handleSeen = async () => {
-        if (post?.post_id) {
-            try {
-                await postService.markAsSeen(post.post_id);
-                setSeen(true);
-                setPost((prevPost) => prevPost ? {
-                    ...prevPost,
-                    user_post_info: {
-                        ...prevPost.user_post_info,
-                        seen: true,
-                    },
-                } : prevPost);
-            } catch (error) {
-                console.error('Error marking post as seen:', error);
-            }
-        }
-    };
-
-    const handleComment = async () => {
-        if (post?.post_id && commentText.trim()) {
-            try {
-                await postService.createComment(post.post_id, commentText);
-                setPost((prevPost) => ({
-                    ...prevPost,
-                    comments: (prevPost?.comments || 0) + 1,
-                }));
-                setCommentText('');
-            } catch (error) {
-                console.error('Error adding comment:', error);
-            }
         }
     };
 
@@ -123,81 +61,76 @@ const ItemScreen = () => {
     }
 
     return (
-        <KeyboardAvoidingView 
-            style={styles.container} 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={100}
-        >
-            <ScrollView style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity 
-                        style={styles.backButton}
-                        onPress={() => router.back()}
+        <ScrollView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity 
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <Text style={styles.backButtonText}>← Back</Text>
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.heroSection}>
+                {post.entity?.image_key && (
+                    <ImageBackground
+                        source={{ uri: `https://image.tmdb.org/t/p/w500/${post.entity.image_key}` }}
+                        style={styles.trailerBackground}
                     >
-                        <Text style={styles.backButtonText}>← Back</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.title}>{post.entity?.title}</Text>
-                    <Text style={styles.date}>{new Date(post.created_date || '').toLocaleDateString()}</Text>
-                </View>
+                        <View style={styles.overlay} />
+                    </ImageBackground>
+                )}
+            </View>
 
-                <View style={styles.content}>
-                    <TouchableOpacity onPress={handleLike}>
-                        <Text style={styles.likeText}>{liked ? '♥' : '♡'} {post.likes || 0} likes</Text>
-                    </TouchableOpacity>
-                    {post.entity?.release_date && (
-                        <InfoRow label="Release Date" value={post.entity.release_date} />
-                    )}
-                    {post.entity?.director && (
-                        <InfoRow label="Director" value={post.entity.director} />
-                    )}
-                    {post.entity?.genres && post.entity.genres.length > 0 && (
-                        <View style={styles.genresContainer}>
-                            <Text style={styles.label}>Genres</Text>
-                            <View style={styles.genresList}>
-                                {post.entity.genres.map((genre: Genre, index: number) => (
-                                    <View key={index} style={styles.genreTag}>
-                                        <Text style={styles.genreText}>{genre.name}</Text>
-                                    </View>
-                                ))}
-                            </View>
+            <View style={styles.content}>
+                <View style={styles.titleSection}>
+                    <View style={styles.titleContent}>
+                        <Text style={styles.title}>{post.entity?.title}</Text>
+                        <View style={styles.details}>
+                            <Text style={styles.year}>
+                                {post.entity?.release_date ? post.entity.release_date.split('/')[2] : ''}
+                            </Text>
+                            {post.entity?.director && (
+                                <Text style={styles.director}>
+                                    <Text style={styles.directorLabel}>Directed by </Text>
+                                    <Text style={styles.directorName}>{post.entity.director}</Text>
+                                </Text>
+                            )}
+                        </View>
+                    </View>
+                    {post.entity?.image_key && (
+                        <View style={styles.posterContainer}>
+                            <Image 
+                                source={{ uri: `https://image.tmdb.org/t/p/w500/${post.entity.image_key}` }}
+                                style={styles.poster}
+                                resizeMode="cover"
+                            />
                         </View>
                     )}
-                    {post.entity?.overview && (
-                        <View style={styles.overviewContainer}>
-                            <Text style={styles.label}>Overview</Text>
-                            <Text style={styles.overview}>{post.entity.overview}</Text>
-                        </View>
-                    )}
-                    
-                    <View style={styles.statsContainer}>
-                        <Text style={styles.statsText}>💬 {post.comments || 0} comments</Text>
-                    </View>
-
-                    <View style={styles.commentInputContainer}>
-                        <TextInput
-                            style={styles.commentInput}
-                            value={commentText}
-                            onChangeText={setCommentText}
-                            placeholder="Add a comment..."
-                            placeholderTextColor={colors.textMuted}
-                        />
-                        <TouchableOpacity onPress={handleComment}>
-                            <Text style={styles.commentButton}>Post</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+
+                {post.entity?.overview && (
+                    <View style={styles.overviewContainer}>
+                        <Text style={styles.overview}>{post.entity.overview}</Text>
+                    </View>
+                )}
+
+                {post.entity?.watch_providers && post.entity.watch_providers.length > 0 && (
+                    <View style={styles.providersContainer}>
+                        <Text style={styles.providersTitle}>Available on</Text>
+                        <View style={styles.providersList}>
+                            {post.entity.watch_providers.map((provider, index) => (
+                                <View key={index} style={styles.providerItem}>
+                                    <Text style={styles.providerText}>{provider.provider_name}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                )}
+            </View>
+        </ScrollView>
     );
 };
-
-// Helper component for displaying info rows
-const InfoRow = ({ label, value }: { label: string; value: string }) => (
-    <View style={styles.infoRow}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.value}>{value}</Text>
-    </View>
-);
 
 const styles = StyleSheet.create({
     container: {
@@ -205,110 +138,95 @@ const styles = StyleSheet.create({
         backgroundColor: colors.background,
     },
     header: {
-        backgroundColor: colors.surface,
-        padding: 16,
-        paddingTop: 45,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.border,
+        position: 'absolute',
+        top: 45,
+        left: 16,
+        zIndex: 10,
     },
     backButton: {
-        marginBottom: 16,
+        padding: 8,
     },
     backButtonText: {
-        color: colors.textSecondary,
+        color: colors.textPrimary,
         fontSize: 16,
     },
+    heroSection: {
+        height: 300,
+        width: '100%',
+    },
+    trailerBackground: {
+        width: '100%',
+        height: '100%',
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    content: {
+        padding: 16,
+        marginTop: -50,
+    },
+    titleSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 24,
+    },
+    titleContent: {
+        flex: 1,
+        marginRight: 16,
+    },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         color: colors.textPrimary,
         marginBottom: 8,
     },
-    date: {
-        color: colors.textMuted,
-        fontSize: 14,
-    },
-    content: {
-        padding: 16,
-    },
-    infoRow: {
-        marginBottom: 16,
-        padding: 12,
-        backgroundColor: colors.surface,
-        borderRadius: 8,
-        shadowColor: '#FFFFFF',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-    },
-    label: {
-        fontSize: 14,
-        color: colors.textMuted,
-        marginBottom: 4,
-    },
-    value: {
-        fontSize: 16,
-        color: colors.textPrimary,
-    },
-    genresContainer: {
-        marginBottom: 16,
-    },
-    genresList: {
+    details: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
-        marginTop: 8,
+        alignItems: 'center',
     },
-    genreTag: {
-        backgroundColor: colors.surfaceLight,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+    year: {
+        fontSize: 16,
+        color: colors.textMuted,
+        marginRight: 12,
     },
-    genreText: {
-        color: colors.textSecondary,
-        fontSize: 14,
+    director: {
+        fontSize: 16,
+        color: colors.textMuted,
+    },
+    directorLabel: {
+        color: colors.textMuted,
+    },
+    directorName: {
+        fontWeight: '600',
+        color: colors.textMuted,
+    },
+    posterContainer: {
+        width: 100,
+        height: 150,
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    poster: {
+        width: '100%',
+        height: '100%',
     },
     overviewContainer: {
-        marginBottom: 16,
-        padding: 12,
         backgroundColor: colors.surface,
-        borderRadius: 8,
-        shadowColor: '#FFFFFF',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-    },
-    overview: {
-        color: colors.textSecondary,
-        fontSize: 16,
-        lineHeight: 24,
-    },
-    statsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
         padding: 16,
-        backgroundColor: colors.surface,
-        borderRadius: 8,
+        borderRadius: 12,
         marginTop: 16,
     },
-    statsText: {
-        color: colors.textSecondary,
+    overview: {
         fontSize: 16,
+        lineHeight: 24,
+        color: colors.textSecondary,
+    },
+    errorText: {
+        color: colors.error,
+        textAlign: 'center',
+        padding: 16,
     },
     button: {
         backgroundColor: colors.surfaceLight,
@@ -321,38 +239,34 @@ const styles = StyleSheet.create({
         color: colors.textPrimary,
         fontSize: 16,
     },
-    errorText: {
-        color: colors.error,
-        textAlign: 'center',
+    providersContainer: {
+        backgroundColor: colors.surface,
         padding: 16,
-    },
-    likeText: {
-        color: colors.textPrimary,
-        fontSize: 16,
-        marginBottom: 16,
-    },
-    commentInputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        borderRadius: 12,
         marginTop: 16,
-        backgroundColor: '#333333',
-        borderRadius: 8,
-        padding: 8,
     },
-    commentInput: {
-        flex: 1,
-        padding: 12,
-        color: '#ffffff',
+    providersTitle: {
         fontSize: 16,
+        fontWeight: '600',
+        color: colors.textPrimary,
+        marginBottom: 12,
+    },
+    providersList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    providerItem: {
+        backgroundColor: colors.surfaceLight,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 16,
         borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: 8,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
     },
-    commentButton: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginLeft: 8,
+    providerText: {
+        color: colors.textSecondary,
+        fontSize: 14,
     },
 });
 

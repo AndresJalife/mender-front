@@ -52,6 +52,24 @@ export const postService = {
             throw error;
         }
     },
+    getPost: async (postId: number): Promise<Post> => {
+        try {
+            const response = await getAuthenticatedRequest(`/post/${postId}`);
+            if (!response?.ok) {
+                throw new Error('Failed to fetch post');
+            }
+            const data = await response.json();
+            
+            if (data.entity) {
+                data.entity.image_key = `ldFX26JW3fusyMewRoWoXYWaffw.jpg`;
+            }
+            
+            return data as Post;
+        } catch (error) {
+            console.error('Error in getPost:', error);
+            throw error;
+        }
+    },
     likePost: async (postId: number): Promise<void> => {
         try {
             const response = await getAuthenticatedRequest(`/post/${postId}/like`,
