@@ -157,6 +157,17 @@ const ItemScreen = () => {
                                 {post.entity?.director && ` - ${post.entity.director}`}
                             </Text>
                         </View>
+                        {post.entity?.genres && post.entity.genres.length > 0 && (
+                            <View style={styles.genresContainer}>
+                                <View style={styles.genresList}>
+                                    {post.entity.genres.map((genre, index) => (
+                                        <View key={index} style={styles.genreItem}>
+                                            <Text style={styles.genreText}>{genre.name}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            </View>
+                        )}
                     </View>
                     {post.entity?.poster_key && (
                         <View style={styles.posterContainer}>
@@ -222,19 +233,6 @@ const ItemScreen = () => {
                 {post.entity?.overview && (
                     <View style={styles.overviewContainer}>
                         <Text style={styles.overview}>{post.entity.overview}</Text>
-                    </View>
-                )}
-
-                {post.entity?.genres && post.entity.genres.length > 0 && (
-                    <View style={styles.providersContainer}>
-                        <Text style={styles.providersTitle}>Genres</Text>
-                        <View style={styles.providersList}>
-                            {post.entity.genres.map((genre, index) => (
-                                <View key={index} style={styles.providerItem}>
-                                    <Text style={styles.providerText}>{genre.name}</Text>
-                                </View>
-                            ))}
-                        </View>
                     </View>
                 )}
 
@@ -394,8 +392,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     year: {
-        fontSize: 18,
-        color: colors.textMuted,
+        fontSize: 16,
+        color: colors.textSecondary,
     },
     posterContainer: {
         width: 100,
@@ -403,6 +401,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         overflow: 'hidden',
         position: 'relative',
+        marginTop: -30,
     },
     poster: {
         width: '100%',
@@ -547,6 +546,26 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
         marginTop: 8,
         textAlign: 'center',
+    },
+    genresContainer: {
+        marginTop: 8,
+    },
+    genresList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    genreItem: {
+        backgroundColor: colors.surfaceLight,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    genreText: {
+        color: colors.textSecondary,
+        fontSize: 14,
     },
 });
 
