@@ -124,6 +124,23 @@ export const postService = {
             console.error('Error in createComment:', error);
             throw error;
         }
+    },
+    ratePost: async (postId: number, rating: number): Promise<void> => {
+        try {
+            const response = await getAuthenticatedRequest(`/post/${postId}/rate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rating }),
+            });
+            if (!response?.ok) {
+                throw new Error('Failed to rate post');
+            }
+        } catch (error) {
+            console.error('Error in ratePost:', error);
+            throw error;
+        }
     }
 }; 
 

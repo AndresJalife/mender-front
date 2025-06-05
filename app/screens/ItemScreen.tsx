@@ -28,6 +28,7 @@ const ItemScreen = () => {
     const [seen, setSeen] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
+    const [isRating, setIsRating] = useState(false);
 
     useEffect(() => {
         loadPost();
@@ -97,6 +98,49 @@ const ItemScreen = () => {
         setCommentCount(prev => prev + 1);
     };
 
+    const handleRating = async (rating: number) => {
+        if (!post?.post_id || isRating) return;
+        
+        try {
+            setIsRating(true);
+            await postService.ratePost(post.post_id, rating);
+            setPost(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    user_post_info: {
+                        ...prev.user_post_info,
+                        user_rating: rating
+                    }
+                };
+            });
+        } catch (error) {
+            console.error('Error rating post:', error);
+        } finally {
+            setIsRating(false);
+        }
+    };
+
+    const renderStar = (index: number) => {
+        const rating = post?.user_post_info?.user_rating || 0;
+        const isHalfStar = rating % 1 !== 0 && Math.ceil(rating) === index;
+        const isFullStar = rating >= index;
+        
+        return (
+            <TouchableOpacity
+                key={index}
+                onPress={() => handleRating(index)}
+                style={styles.starContainer}
+            >
+                <Ionicons
+                    name={isHalfStar ? "star-half" : isFullStar ? "star" : "star-outline"}
+                    size={32}
+                    color={isFullStar || isHalfStar ? "#FFD700" : colors.textMuted}
+                />
+            </TouchableOpacity>
+        );
+    };
+
     if (isLoading) {
         return (
             <View style={styles.container}>
@@ -157,15 +201,11 @@ const ItemScreen = () => {
                                 {post.entity?.director && ` - ${post.entity.director}`}
                             </Text>
                         </View>
-                        {post.entity?.genres && post.entity.genres.length > 0 && (
-                            <View style={styles.genresContainer}>
-                                <View style={styles.genresList}>
-                                    {post.entity.genres.map((genre, index) => (
-                                        <View key={index} style={styles.genreItem}>
-                                            <Text style={styles.genreText}>{genre.name}</Text>
-                                        </View>
-                                    ))}
-                                </View>
+                        {post.entity?.vote_average && (
+                            <View style={styles.ratingContainer}>
+                                <Text style={styles.ratingText}>
+                                    {post.entity.vote_average.toFixed(1)}/10
+                                </Text>
                             </View>
                         )}
                     </View>
@@ -228,6 +268,12 @@ const ItemScreen = () => {
                         />
                         <Text style={styles.actionButtonText}>{commentCount}</Text>
                     </TouchableOpacity>
+                </View>
+
+                <View style={styles.ratingSection}>
+                    <View style={styles.starsContainer}>
+                        {[1, 2, 3, 4, 5].map(renderStar)}
+                    </View>
                 </View>
 
                 {post.entity?.overview && (
@@ -309,12 +355,16 @@ const ItemScreen = () => {
                                 </View>
                             )}
 
-                            {post.entity?.vote_average && (
+                            {post.entity?.genres && post.entity.genres.length > 0 && (
                                 <View style={styles.detailSection}>
-                                    <Text style={styles.detailTitle}>Rating</Text>
-                                    <Text style={styles.detailText}>
-                                        {post.entity.vote_average.toFixed(1)}/10
-                                    </Text>
+                                    <Text style={styles.detailTitle}>Genres</Text>
+                                    <View style={styles.genresList}>
+                                        {post.entity.genres.map((genre, index) => (
+                                            <View key={index} style={styles.genreItem}>
+                                                <Text style={styles.genreText}>{genre.name}</Text>
+                                            </View>
+                                        ))}
+                                    </View>
                                 </View>
                             )}
                         </View>
@@ -556,16 +606,48 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     genreItem: {
-        backgroundColor: colors.surfaceLight,
+        backgroundColor: 'rgba(255, 255, 255, 0.08)',
         paddingHorizontal: 12,
         paddingVertical: 6,
-        borderRadius: 16,
+        borderRadius: 6,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'rgba(255, 255, 255, 0.15)',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
     },
     genreText: {
-        color: colors.textSecondary,
-        fontSize: 14,
+        color: colors.textPrimary,
+        fontSize: 13,
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
+    ratingContainer: {
+        marginTop: 8,
+    },
+    ratingText: {
+        color: colors.textPrimary,
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    ratingSection: {
+        backgroundColor: colors.surface,
+        padding: 16,
+        borderRadius: 12,
+        marginTop: 16,
+        alignItems: 'center',
+    },
+    starsContainer: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    starContainer: {
+        padding: 4,
     },
 });
 
