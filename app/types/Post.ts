@@ -27,6 +27,7 @@ export interface Entity {
     vote_average?: number;
     release_date?: string;
     revenue?: number;
+    budget?: number;
     runtime?: number;
     overview?: string;
     popularity?: number;

@@ -13,12 +13,15 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { colors } from '../constants/colors';
 import { Post } from '../types/Post';
 import postService from '../services/postService';
+import { Ionicons } from '@expo/vector-icons';
 
 const ItemScreen = () => {
     const { id } = useLocalSearchParams();
     const [post, setPost] = useState<Post | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [liked, setLiked] = useState(false);
+    const [seen, setSeen] = useState(false);
 
     useEffect(() => {
         loadPost();
@@ -30,11 +33,56 @@ const ItemScreen = () => {
             setError(null);
             const data = await postService.getPost(Number(id));
             setPost(data);
+            setLiked(data.user_post_info?.liked || false);
+            setSeen(data.user_post_info?.seen || false);
         } catch (err) {
             setError('Failed to load post');
             console.error(err);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleLike = async () => {
+        if (!post?.post_id) return;
+        
+        try {
+            await postService.likePost(post.post_id);
+            setLiked(!liked);
+            setPost(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    likes: (prev.likes || 0) + (liked ? -1 : 1),
+                    user_post_info: {
+                        ...prev.user_post_info,
+                        liked: !liked,
+                    }
+                };
+            });
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
+    };
+
+    const handleSeen = async () => {
+        if (!post?.post_id) return;
+        
+        try {
+            await postService.markAsSeen(post.post_id);
+            setSeen(!seen);
+            setPost(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    user_post_info: {
+                        ...prev.user_post_info,
+                        seen: !seen,
+                    }
+                };
+            });
+        } catch (error) {
+            console.error('Error marking post as seen:', error);
         }
     };
 
@@ -109,6 +157,56 @@ const ItemScreen = () => {
                     )}
                 </View>
 
+                <View style={styles.actionButtons}>
+                    <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={handleLike}
+                    >
+                        <Ionicons 
+                            name={liked ? "heart" : "heart-outline"} 
+                            size={24} 
+                            color={liked ? "#ff4d4d" : colors.textPrimary} 
+                        />
+                        <Text style={[styles.actionButtonText, liked && styles.likedText]}>
+                            {post.likes || 0}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={handleSeen}
+                    >
+                        <Ionicons 
+                            name={seen ? "eye" : "eye-outline"} 
+                            size={24} 
+                            color={seen ? "#4dff4d" : colors.textPrimary} 
+                        />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={() => {/* TODO: Implement playlist functionality */}}
+                    >
+                        <Ionicons 
+                            name="add-circle-outline" 
+                            size={24} 
+                            color={colors.textPrimary} 
+                        />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={() => {/* TODO: Implement comment functionality */}}
+                    >
+                        <Ionicons 
+                            name="chatbubble-outline" 
+                            size={24} 
+                            color={colors.textPrimary} 
+                        />
+                        <Text style={styles.actionButtonText}>{post.comments || 0}</Text>
+                    </TouchableOpacity>
+                </View>
+
                 {post.entity?.overview && (
                     <View style={styles.overviewContainer}>
                         <Text style={styles.overview}>{post.entity.overview}</Text>
@@ -127,6 +225,66 @@ const ItemScreen = () => {
                         </View>
                     </View>
                 )}
+
+                <View style={styles.detailsContainer}>
+                    {post.entity?.genres && post.entity.genres.length > 0 && (
+                        <View style={styles.detailSection}>
+                            <Text style={styles.detailTitle}>Genres</Text>
+                            <View style={styles.detailContent}>
+                                {post.entity.genres.map((genre, index) => (
+                                    <View key={index} style={styles.genreItem}>
+                                        <Text style={styles.genreText}>{genre.name}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    )}
+
+                    {post.entity?.production_companies && post.entity.production_companies.length > 0 && (
+                        <View style={styles.detailSection}>
+                            <Text style={styles.detailTitle}>Production Companies</Text>
+                            <View style={styles.detailContent}>
+                                {post.entity.production_companies.map((company, index) => (
+                                    <Text key={index} style={styles.detailText}>{company.name}</Text>
+                                ))}
+                            </View>
+                        </View>
+                    )}
+
+                    {post.entity?.runtime && (
+                        <View style={styles.detailSection}>
+                            <Text style={styles.detailTitle}>Runtime</Text>
+                            <Text style={styles.detailText}>{post.entity.runtime} minutes</Text>
+                        </View>
+                    )}
+
+                    {post.entity?.budget && (
+                        <View style={styles.detailSection}>
+                            <Text style={styles.detailTitle}>Budget</Text>
+                            <Text style={styles.detailText}>
+                                ${post.entity.budget.toLocaleString()}
+                            </Text>
+                        </View>
+                    )}
+
+                    {post.entity?.revenue && (
+                        <View style={styles.detailSection}>
+                            <Text style={styles.detailTitle}>Revenue</Text>
+                            <Text style={styles.detailText}>
+                                ${post.entity.revenue.toLocaleString()}
+                            </Text>
+                        </View>
+                    )}
+
+                    {post.entity?.vote_average && (
+                        <View style={styles.detailSection}>
+                            <Text style={styles.detailTitle}>Rating</Text>
+                            <Text style={styles.detailText}>
+                                {post.entity.vote_average.toFixed(1)}/10
+                            </Text>
+                        </View>
+                    )}
+                </View>
             </View>
         </ScrollView>
     );
@@ -267,6 +425,66 @@ const styles = StyleSheet.create({
     providerText: {
         color: colors.textSecondary,
         fontSize: 14,
+    },
+    detailsContainer: {
+        backgroundColor: colors.surface,
+        padding: 16,
+        borderRadius: 12,
+        marginTop: 16,
+        marginBottom: 32,
+    },
+    detailSection: {
+        marginBottom: 16,
+    },
+    detailTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: colors.textPrimary,
+        marginBottom: 8,
+    },
+    detailContent: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    detailText: {
+        fontSize: 15,
+        color: colors.textSecondary,
+        lineHeight: 22,
+    },
+    genreItem: {
+        backgroundColor: colors.surfaceLight,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    genreText: {
+        color: colors.textSecondary,
+        fontSize: 14,
+    },
+    actionButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        paddingVertical: 12,
+        backgroundColor: colors.surface,
+        borderRadius: 12,
+        marginTop: 16,
+        marginBottom: 16,
+    },
+    actionButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    actionButtonText: {
+        color: colors.textPrimary,
+        fontSize: 14,
+    },
+    likedText: {
+        color: '#ff4d4d',
     },
 });
 

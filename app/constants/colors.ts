@@ -17,6 +17,7 @@ export const colors = {
     error: '#FF5252',
     danger: '#d32f2f',
     dangerBg: '#ffebee',
+    primary: '#0a7ea4',
 
     white: '#FFFFFF',
 }; 
