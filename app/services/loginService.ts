@@ -68,6 +68,8 @@ export const loginService = {
                     throw new Error('Failed to fetch user details');
                 }
 
+                console.log('userResponse', userResponse);
+                
                 const userData: UserResponse = await userResponse.json();
 
                 // Dispatch login success action to Redux store with complete user data

@@ -16,7 +16,9 @@ export const colors = {
     // Status colors
     error: '#FF5252',
     danger: '#d32f2f',
-    dangerBg: '#ffebee'
+    dangerBg: '#ffebee',
+
+    white: '#FFFFFF',
 }; 
 
 export default colors;

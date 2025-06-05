@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '../types/RootState';
+import RootState from '../types/RootState';
 import { colors } from '../constants/colors';
 import { Countries, UserSex } from '../types/enums';
 
@@ -18,7 +18,7 @@ export const EditProfileScreen = () => {
     const [formData, setFormData] = useState({
         name: user?.name || '',
         username: user?.username || '',
-        country: user?.country || Countries.UNKNOWN,
+        country: user?.country || Countries[0], // Using first country as default
         sex: user?.sex || UserSex.UNKNOWN,
     });
 
@@ -216,12 +216,12 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     passwordButtonText: {
-        color: colors.primary,
+        color: colors.textPrimary,
         fontSize: 16,
         fontWeight: '600',
     },
     saveButton: {
-        backgroundColor: colors.primary,
+        backgroundColor: colors.textPrimary,
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.surfaceLight,
     },
     confirmButton: {
-        backgroundColor: colors.primary,
+        backgroundColor: colors.textPrimary,
     },
     modalButtonText: {
         color: colors.textPrimary,
