@@ -20,6 +20,7 @@ const initialState: AuthState = {
   isAuthenticated: true
 }
 
+// @ts-ignore
 // const initialState: AuthState = {
 //   user: {
 //     id: null,

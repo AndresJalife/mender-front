@@ -69,6 +69,7 @@ const SearchScreen = () => {
     };
 
     const handleResultPress = (item: Post) => {
+        console.log('Navigating to item:', item.entity?.image_key);
         router.push(`/screens/ItemScreen?id=${item.post_id}`);
     };
 
@@ -82,29 +83,40 @@ const SearchScreen = () => {
             style={styles.resultItem}
             onPress={() => handleResultPress(item)}
         >
-            {/* {item.thumbnail && (
-                <Image 
-                    source={{ uri: item.thumbnail }}
-                    style={styles.thumbnail}
-                />
-            )} */}
+            <View style={styles.imageContainer}>
+                {item.entity?.image_key && (
+                    <Image 
+                        source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.image_key}` }}
+                        style={styles.resultImage}
+                        resizeMode="cover"
+                    />
+                )}
+            </View>
             <View style={styles.itemContent}>
-                <Text style={styles.itemTitle}>{item.entity?.title} - {item.entity?.release_date}</Text>
-                <Text style={styles.itemDescription} numberOfLines={2}>
-                    {item.entity?.overview}
-                </Text>
+                <Text style={styles.itemTitle}>{item.entity?.title}</Text>
+                <View style={styles.itemDetails}>
+                    <Text style={styles.itemYear}>
+                        {item.entity?.release_date ? item.entity.release_date.split('/')[2] : ''}
+                    </Text>
+                    {item.entity?.director && (
+                        <Text style={styles.itemDirector}>
+                            <Text style={styles.directorLabel}>Directed by </Text>
+                            <Text style={styles.directorName}>{item.entity.director}</Text>
+                        </Text>
+                    )}
+                </View>
             </View>
         </TouchableOpacity>
     );
 
     const renderRecommendationItem = ({ item }: { item: Post }) => (
-        <TouchableOpacity 
+        <TouchableOpacity
             style={styles.recommendationItem}
             onPress={() => handleResultPress(item)}
         >
-            {item.entity?.image_id && (
-                <Image 
-                    source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.image_id}` }}
+            {item.entity?.image_key && (
+                <Image
+                    source={{ uri: `https://image.tmdb.org/t/p/w500/${item.entity.image_key}` }}
                     style={styles.recommendationImage}
                 />
             )}
@@ -239,8 +251,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: colors.surface,
         borderRadius: 12,
-        padding: 12,
-        marginBottom: 8,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginBottom: 6,
         shadowColor: '#FFFFFF',
         shadowOffset: {
             width: 0,
@@ -252,24 +265,48 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.1)',
     },
-    thumbnail: {
+    imageContainer: {
         width: 60,
-        height: 60,
+        height: 90,
         borderRadius: 8,
-        marginRight: 12,
+        overflow: 'hidden',
+        marginRight: 8,
+    },
+    resultImage: {
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
     },
     itemContent: {
         flex: 1,
+        justifyContent: 'center',
+        paddingRight: 4,
     },
     itemTitle: {
         fontSize: 16,
         fontWeight: '600',
         color: colors.textPrimary,
-        marginBottom: 4,
+        marginBottom: 2,
     },
-    itemDescription: {
+    itemDetails: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    itemYear: {
         fontSize: 14,
-        color: colors.textSecondary,
+        color: colors.textMuted,
+        marginRight: 8,
+    },
+    itemDirector: {
+        fontSize: 14,
+        color: colors.textMuted,
+    },
+    directorLabel: {
+        color: colors.textMuted,
+    },
+    directorName: {
+        fontWeight: '600',
+        color: colors.textMuted,
     },
     loader: {
         padding: 20,

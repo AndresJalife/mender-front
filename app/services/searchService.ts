@@ -11,6 +11,13 @@ export const searchService = {
         
         const data = await response.json();
 
+        // Add image key to each post
+        for (const post of data) {
+            if (post.entity) {
+                post.entity.image_key = `ldFX26JW3fusyMewRoWoXYWaffw.jpg`;
+            }
+        }
+
         return data;
     }
 }; 

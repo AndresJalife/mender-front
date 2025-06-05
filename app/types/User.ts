@@ -1,6 +1,6 @@
 import { Countries, UserSex } from './enums';
 
-export interface User {
+export default interface User {
     user_id?: number;
     email?: string;
     password?: string;
