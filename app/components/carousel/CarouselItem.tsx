@@ -42,6 +42,15 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
         isActive.current = isCurrentlyActive;
     }, [activeItem, data.entity?.trailer, data.post_id, isHomeTab]);
 
+    // Handle tab switching
+    React.useEffect(() => {
+        // If we're leaving home tab and the item is active, send the viewing time
+        if (!isHomeTab && isActive.current && data.post_id) {
+            const timeSeen = Math.floor((Date.now() - viewStartTime.current));
+            implicitService.postSeen(data.post_id, timeSeen);
+        }
+    }, [isHomeTab, data.post_id]);
+
     const handleLike = async () => {
         if (data.post_id) {
             try {
