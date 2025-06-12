@@ -1,7 +1,8 @@
 import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 import { loginSuccess } from '../store/auth';
 import { store } from '../store/store'; // Make sure to export store instance
-import { UserSex } from '../types/enums';
+import { Countries, UserSex } from '../types/enums';
+import User from '../types/User';
 
 interface LoginCredentials {
     email: string;
@@ -24,17 +25,6 @@ interface LoginResponse {
     email: string;
     name: string;
     username: string;
-}
-
-interface UserResponse {
-    user_id: number;
-    email: string;
-    name: string;
-    username: string;
-    country: string;
-    sex: UserSex;
-    created_date: string;
-    uid: string;
 }
 
 interface SignupResponse {
@@ -70,22 +60,12 @@ export const loginService = {
 
                 console.log('userResponse', userResponse);
                 
-                const userData: UserResponse = await userResponse.json();
+                const userData: User = await userResponse.json();
 
                 // Dispatch login success action to Redux store with complete user data
                 store.dispatch(loginSuccess({
                     token: data.token,
-                    user: {
-                        user_id: userData.user_id,
-                        email: userData.email,
-                        name: userData.name,
-                        username: userData.username,
-                        country: userData.country,
-                        sex: userData.sex,
-                        created_date: userData.created_date,
-                        uid: userData.uid,
-                        password: credentials.password
-                    }
+                    user: userData
                 }));
                 return true;
             }
