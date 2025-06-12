@@ -4,6 +4,7 @@ import VideoPlayer from "@/app/components/carousel/VideoPlayer";
 import { Post } from "@/app/types/Post";
 import { Ionicons } from '@expo/vector-icons';
 import { postService } from '@/app/services/postService';
+import { implicitService } from '@/app/services/implicitService';
 import CommentsModal from '../CommentsModal';
 import { router } from 'expo-router';
 import { Genre, Actor, ProductionCompany, WatchProvider } from "@/app/types/Post";
@@ -20,6 +21,26 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
     const [seen, setSeen] = React.useState(data.user_post_info?.seen || false);
     const [commentCount, setCommentCount] = React.useState(data.comments || 0);
     const [commentText, setCommentText] = React.useState<string>(''); // State for comment input
+    const viewStartTime = React.useRef<number>(Date.now());
+    const isActive = React.useRef<boolean>(false);
+
+    // Track when this item becomes active/inactive
+    React.useEffect(() => {
+        const isCurrentlyActive = data.entity?.trailer === activeItem;
+        
+        // If this item was active and is no longer active, send the viewing time
+        if (isActive.current && !isCurrentlyActive && data.post_id && isHomeTab) {
+            const timeSeen = Math.floor((Date.now() - viewStartTime.current));
+            implicitService.postSeen(data.post_id, timeSeen);
+        }
+        
+        // If this item is now active and we're in home tab, start the timer
+        if (isCurrentlyActive && isHomeTab) {
+            viewStartTime.current = Date.now();
+        }
+        
+        isActive.current = isCurrentlyActive;
+    }, [activeItem, data.entity?.trailer, data.post_id, isHomeTab]);
 
     const handleLike = async () => {
         if (data.post_id) {

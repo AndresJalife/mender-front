@@ -42,7 +42,6 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
         }
     }, [currentIndex, items.length]);
 
-
     return (
         <View style={styles.carouselContainer}>
             <CarouselComp
