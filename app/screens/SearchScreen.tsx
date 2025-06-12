@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     View,
     StyleSheet,
@@ -60,8 +60,13 @@ const SearchScreen = () => {
         }
     };
 
-    // Debounce search to avoid too many API calls
-    const debouncedSearch = debounce(performSearch, 300);
+    // Memoize the debounced search function
+    const debouncedSearch = useCallback(
+        debounce((searchQuery: string) => {
+            performSearch(searchQuery);
+        }, 600),
+        [] // Empty dependency array since performSearch is stable
+    );
 
     const handleQueryChange = (text: string) => {
         setQuery(text);

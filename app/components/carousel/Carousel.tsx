@@ -34,7 +34,6 @@ const Carousel: React.FC<IndexProps> = ({items, currentTab, onLoadMore}) => {
         }
 
         const remaining = items.length - 1 - currentIndex;
-        console.log("Remaining items: ", remaining);
 
         if (remaining <= 3 && !isLoadingMore) {
             setIsLoadingMore(true);
