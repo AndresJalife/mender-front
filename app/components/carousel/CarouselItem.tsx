@@ -1,5 +1,5 @@
 import * as React from "react";
-import {View, Text, StyleSheet, TouchableOpacity, TextInput} from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity, TextInput, ImageBackground} from "react-native";
 import VideoPlayer from "@/app/components/carousel/VideoPlayer";
 import { Post } from "@/app/types/Post";
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,8 @@ import { implicitService } from '@/app/services/implicitService';
 import CommentsModal from '../CommentsModal';
 import { router } from 'expo-router';
 import { Genre, Actor, ProductionCompany, WatchProvider } from "@/app/types/Post";
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../../constants/colors';
 
 interface Props {
     data: Post;
@@ -107,81 +109,181 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Text style={styles.title}>{data.entity?.title}</Text>
-                <Text style={styles.director}>{data.entity?.director}</Text>
-                <View style={styles.headerDivider} />
-            </View>
-            <VideoPlayer 
-                url={data.entity?.trailer}
-                activeItem={activeItem}
-                isHomeTab={isHomeTab}
-            />
-            <View style={styles.videoDivider} />
-            <View style={styles.actionButtons}>
-                <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-                    <Ionicons 
-                        name={liked ? "heart" : "heart-outline"} 
-                        size={24} 
-                        color={liked ? "#ff4d4d" : "#ffffff"} 
-                    />
-                    <Text style={[styles.actionButtonText, liked && styles.likedText]}>
-                        {data.likes || 0}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={handleSeen}>
-                    <Ionicons 
-                        name={seen ? "eye" : "eye-outline"} 
-                        size={24} 
-                        color={seen ? "#4dff4d" : "#ffffff"} 
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={styles.actionButton} 
-                    onPress={() => setShowComments(true)}
+            {data.entity?.poster_key ? (
+                <ImageBackground
+                    source={{ uri: `https://image.tmdb.org/t/p/w500/${data.entity.poster_key}` }}
+                    style={styles.fullBackground}
                 >
-                    <Ionicons name="chatbubble-outline" size={24} color="#ffffff" />
-                    <Text style={styles.actionButtonText}>{commentCount}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
-                    <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={styles.actionButton}
-                    onPress={handleViewDetails}
-                >
-                    <Ionicons name="information-circle-outline" size={24} color="#ffffff" />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.videoDivider} />
-            <View style={styles.contentContainer}>
-                {/* Rating, Year, and Genres */}
-                <View style={styles.ratingRow}>
-                    <View style={styles.ratingContainer}>
-                        <Text style={styles.rating}>☆ {data.entity?.vote_average || 'N/A'}</Text>
-                        <Text style={styles.year}>{data.entity?.release_date}</Text>
+                    <LinearGradient
+                        colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)', 'rgba(0,0,0,0.8)']}
+                        locations={[0, 0.5, 1]}
+                        style={styles.gradient}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                    >
+                        {/* Title and Director */}
+                        <View style={styles.titleSection}>
+                            <Text style={styles.title}>{data.entity?.title}</Text>
+                            <Text style={styles.director}>{data.entity?.director}</Text>
+                        </View>
+
+                        {/* Video Player */}
+                        <VideoPlayer 
+                            url={data.entity?.trailer}
+                            activeItem={activeItem}
+                            isHomeTab={isHomeTab}
+                        />
+
+                        {/* Action Buttons */}
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
+                                <Ionicons 
+                                    name={liked ? "heart" : "heart-outline"} 
+                                    size={24} 
+                                    color={liked ? "#ff4d4d" : "#ffffff"} 
+                                />
+                                <Text style={[styles.actionButtonText, liked && styles.likedText]}>
+                                    {data.likes || 0}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.actionButton} onPress={handleSeen}>
+                                <Ionicons 
+                                    name={seen ? "eye" : "eye-outline"} 
+                                    size={24} 
+                                    color={seen ? "#4dff4d" : "#ffffff"} 
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={styles.actionButton} 
+                                onPress={() => setShowComments(true)}
+                            >
+                                <Ionicons name="chatbubble-outline" size={24} color="#ffffff" />
+                                <Text style={styles.actionButtonText}>{commentCount}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.actionButton}>
+                                <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={styles.actionButton}
+                                onPress={handleViewDetails}
+                            >
+                                <Ionicons name="information-circle-outline" size={24} color="#ffffff" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Content Container */}
+                        <View style={styles.contentContainer}>
+                            {/* Rating, Year, and Genres */}
+                            <View style={styles.ratingRow}>
+                                <View style={styles.ratingContainer}>
+                                    <Text style={styles.rating}>☆ {data.entity?.vote_average ? data.entity.vote_average.toFixed(1) : 'N/A'}</Text>
+                                    <Text style={styles.year}>{data.entity?.release_date ? data.entity.release_date.split('/')[2] : ''}</Text>
+                                </View>
+                                <View style={styles.genreContainer}>
+                                    {data.entity?.genres?.map((genre: Genre, index: number) => (
+                                        <Text key={index} style={styles.genreTag}>{genre.name}</Text>
+                                    ))}
+                                </View>
+                            </View>
+
+                            {/* Description */}
+                            <Text style={styles.description} numberOfLines={5} ellipsizeMode="tail">
+                                {data.entity?.overview}
+                            </Text>
+
+                            {/* Additional Info */}
+                            <View style={styles.infoContainer}>
+                                {/* <Text style={styles.infoText}>Duration: {data.entity?.duration}</Text>
+                                {data.entity_type === 's' && (
+                                    <Text style={styles.infoText}>Seasons: {data.entity?.seasons}</Text>
+                                )} */}
+                            </View>
+                        </View>
+                    </LinearGradient>
+                </ImageBackground>
+            ) : (
+                // Fallback when no image is available
+                <View style={styles.fallbackContainer}>
+                    {/* Title and Director */}
+                    <View style={styles.titleSection}>
+                        <Text style={styles.title}>{data.entity?.title}</Text>
+                        <Text style={styles.director}>{data.entity?.director}</Text>
                     </View>
-                    <View style={styles.genreContainer}>
-                        {data.entity?.genres?.map((genre: Genre, index: number) => (
-                            <Text key={index} style={styles.genreTag}>{genre.name}</Text>
-                        ))}
+
+                    {/* Video Player */}
+                    <VideoPlayer 
+                        url={data.entity?.trailer}
+                        activeItem={activeItem}
+                        isHomeTab={isHomeTab}
+                    />
+
+                    {/* Action Buttons */}
+                    <View style={styles.actionButtons}>
+                        <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
+                            <Ionicons 
+                                name={liked ? "heart" : "heart-outline"} 
+                                size={24} 
+                                color={liked ? "#ff4d4d" : "#ffffff"} 
+                            />
+                            <Text style={[styles.actionButtonText, liked && styles.likedText]}>
+                                {data.likes || 0}
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.actionButton} onPress={handleSeen}>
+                            <Ionicons 
+                                name={seen ? "eye" : "eye-outline"} 
+                                size={24} 
+                                color={seen ? "#4dff4d" : "#ffffff"} 
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.actionButton} 
+                            onPress={() => setShowComments(true)}
+                        >
+                            <Ionicons name="chatbubble-outline" size={24} color="#ffffff" />
+                            <Text style={styles.actionButtonText}>{commentCount}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.actionButton}>
+                            <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.actionButton}
+                            onPress={handleViewDetails}
+                        >
+                            <Ionicons name="information-circle-outline" size={24} color="#ffffff" />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Content Container */}
+                    <View style={styles.contentContainer}>
+                        {/* Rating, Year, and Genres */}
+                        <View style={styles.ratingRow}>
+                            <View style={styles.ratingContainer}>
+                                <Text style={styles.rating}>☆ {data.entity?.vote_average ? data.entity.vote_average.toFixed(1) : 'N/A'}</Text>
+                                <Text style={styles.year}>{data.entity?.release_date ? data.entity.release_date.split('/')[2] : ''}</Text>
+                            </View>
+                            <View style={styles.genreContainer}>
+                                {data.entity?.genres?.map((genre: Genre, index: number) => (
+                                    <Text key={index} style={styles.genreTag}>{genre.name}</Text>
+                                ))}
+                            </View>
+                        </View>
+
+                        {/* Description */}
+                        <Text style={styles.description} numberOfLines={5} ellipsizeMode="tail">
+                            {data.entity?.overview}
+                        </Text>
+
+                        {/* Additional Info */}
+                        <View style={styles.infoContainer}>
+                            {/* <Text style={styles.infoText}>Duration: {data.entity?.duration}</Text>
+                            {data.entity_type === 's' && (
+                                <Text style={styles.infoText}>Seasons: {data.entity?.seasons}</Text>
+                            )} */}
+                        </View>
                     </View>
                 </View>
-                <View style={styles.genreDivider} />
-
-                {/* Description */}
-                <Text style={styles.description} numberOfLines={5} ellipsizeMode="tail">
-                    {data.entity?.overview}
-                </Text>
-
-                {/* Additional Info */}
-                <View style={styles.infoContainer}>
-                    {/* <Text style={styles.infoText}>Duration: {data.entity?.duration}</Text>
-                    {data.entity_type === 's' && (
-                        <Text style={styles.infoText}>Seasons: {data.entity?.seasons}</Text>
-                    )} */}
-                </View>
-            </View>
+            )}
 
             {data.post_id && (
                 <CommentsModal
@@ -200,35 +302,55 @@ const styles = StyleSheet.create({
         height: '100%',
         width: '100%',
         flex: 1,
-        backgroundColor: 'red',
+        backgroundColor: colors.background,
     },
-    headerContainer: {
-        backgroundColor: '#1a1a1a',
-        paddingHorizontal: 16,
-        paddingTop: 50,
-        paddingBottom: 12,
-        flexDirection: 'column',
+    fullBackground: {
         width: '100%',
-    },
-    contentContainer: {
-        backgroundColor: '#1a1a1a',
-        padding: 16,
-        paddingTop: 16,
-        paddingBottom: 0,
+        height: '100%',
         flex: 1,
     },
+    gradient: {
+        flex: 1,
+        padding: 16,
+        paddingTop: 50,
+    },
+    fallbackContainer: {
+        flex: 1,
+        padding: 16,
+        paddingTop: 50,
+        backgroundColor: colors.background,
+    },
+    titleSection: {
+        marginBottom: 16,
+    },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#ffffff',
         marginBottom: 8,
-        flexWrap: 'wrap',
-        width: '100%',
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
+        maxWidth: '80%',
     },
     director: {
-        color: '#888888',
+        color: '#ffffff',
         fontSize: 16,
         marginBottom: 4,
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
+        maxWidth: '80%',
+    },
+    contentContainer: {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        padding: 16,
+        borderRadius: 12,
+        marginTop: 16,
+        flex: 1,
+        backdropFilter: 'blur(10px)',
     },
     ratingRow: {
         flexDirection: 'row',
@@ -244,10 +366,16 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         marginRight: 12,
         fontSize: 16,
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
     },
     year: {
-        color: '#888888',
+        color: '#ffffff',
         fontSize: 16,
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
     },
     genreContainer: {
         flexDirection: 'row',
@@ -258,51 +386,55 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     genreTag: {
-        backgroundColor: '#333333',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 12,
+        backgroundColor: '#ffffff',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 16,
         marginLeft: 6,
         marginBottom: 4,
-        color: '#ffffff',
-        fontSize: 16,
+        color: '#000000',
+        fontSize: 14,
+        fontWeight: '600',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     description: {
         color: '#ffffff',
         fontSize: 16,
         lineHeight: 24,
         marginBottom: 16,
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
     },
     infoContainer: {
         borderTopWidth: 1,
-        borderTopColor: '#333333',
+        borderTopColor: 'rgba(255, 255, 255, 0.2)',
         paddingTop: 12,
     },
     infoText: {
-        color: '#888888',
+        color: '#ffffff',
         fontSize: 14,
         marginBottom: 4,
-    },
-    headerDivider: {
-        height: 1,
-        backgroundColor: '#333333',
-        marginTop: 12,
-    },
-    videoDivider: {
-        height: 1,
-        backgroundColor: '#333333',
-    },
-    genreDivider: {
-        height: 1,
-        backgroundColor: '#333333',
-        marginBottom: 16,
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
     },
     actionButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
         paddingVertical: 12,
-        backgroundColor: '#1a1a1a',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        borderRadius: 12,
+        marginTop: 16,
+        backdropFilter: 'blur(10px)',
     },
     actionButton: {
         flexDirection: 'row',
@@ -312,6 +444,9 @@ const styles = StyleSheet.create({
     actionButtonText: {
         color: '#ffffff',
         fontSize: 14,
+        textShadowColor: 'rgba(0, 0, 0, 0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
     },
     likedText: {
         color: '#ff4d4d',
@@ -319,11 +454,13 @@ const styles = StyleSheet.create({
     viewDetailsButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#333333',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 16,
         gap: 4,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     viewDetailsText: {
         color: '#ffffff',
@@ -333,8 +470,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 12,
-        backgroundColor: '#333333',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         borderRadius: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     commentInput: {
         flex: 1,

@@ -16,7 +16,7 @@ const initialState: AuthState = {
     name: "Andres Jalife",
     username: "ajalife",
     country: "ar",
-    new: true,
+    new: false,
     sex: "M",
     created_date: "10/03/2025",
     uid: "Eodt4Y0UOtYRYHe0BjQP72otifI3"
