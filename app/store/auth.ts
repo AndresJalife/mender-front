@@ -8,24 +8,29 @@ interface AuthState {
 }
 
 // // Test
-// const initialState: AuthState = {
-//   user: {
-//     id: 1,
-//     name: "Andres Jalife",
-//     email: "andyjalife@gmail.com",
-//     username: "andyjalife",
-//     password: "AndresJalife"
-//   },
-//   token: null,
-//   isAuthenticated: true
-// }
+const initialState: AuthState = {
+  user: {
+    user_id: 1,
+    password: "AndresJalife",
+    email: "andyjalife@gmail.com",
+    name: "Andres Jalife",
+    username: "ajalife",
+    country: "ar",
+    new: true,
+    sex: "M",
+    created_date: "10/03/2025",
+    uid: "Eodt4Y0UOtYRYHe0BjQP72otifI3"
+},
+  token: null,
+  isAuthenticated: true
+}
 
 // @ts-ignore
-const initialState: AuthState = {
-  user: null,
-  token: null,
-  isAuthenticated: false
-}
+// const initialState: AuthState = {
+//   user: null,
+//   token: null,
+//   isAuthenticated: false
+// }
 
 const authSlice = createSlice({
   name: 'auth',

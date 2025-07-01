@@ -141,6 +141,19 @@ export const postService = {
             console.error('Error in ratePost:', error);
             throw error;
         }
+    },
+    getColdStartItems: async (): Promise<Post[]> => {
+        try {
+            const response = await getAuthenticatedRequest('/post/cold_start');
+            if (!response?.ok) {
+                throw new Error('Failed to fetch cold start items');
+            }
+            const data = await response.json();
+            return data as Post[];
+        } catch (error) {
+            console.error('Error in getColdStartItems:', error);
+            throw error;
+        }
     }
 }; 
 
