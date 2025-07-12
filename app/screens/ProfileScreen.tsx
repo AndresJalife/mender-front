@@ -1,11 +1,11 @@
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Modal, Alert } from 'react-native';
-import { RootState } from '../types/RootState';
+import RootState from '../types/RootState';
 import { store } from '../store/store';
-import { logout } from '../store/auth';
+import { logout, updateUser } from '../store/auth';
 import { colors } from '../constants/colors';
 import { Countries, UserSex } from '../types/enums';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 interface ChangePasswordRequest {
@@ -25,6 +25,18 @@ export const ProfileScreen = () => {
         country: '',
         sex: UserSex.UNKNOWN,
     });
+
+    // Initialize form data with user data from Redux
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || '',
+                username: user.username || '',
+                country: user.country || '',
+                sex: user.sex || UserSex.UNKNOWN,
+            });
+        }
+    }, [user]);
 
     const getCountryLabel = (value: string): string => {
         const country = Countries.find(c => c.value === value);
@@ -63,6 +75,13 @@ export const ProfileScreen = () => {
             if (!response.ok) {
                 throw new Error('Failed to update profile');
             }
+
+            // Update Redux store with new user data
+            const updatedUser = {
+                ...user,
+                ...formData,
+            };
+            store.dispatch(updateUser(updatedUser));
 
             Alert.alert('Success', 'Profile updated successfully');
         } catch (error) {
