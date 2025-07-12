@@ -6,7 +6,7 @@ export default interface User {
     password?: string;
     name?: string;
     username?: string;
-    country?: typeof Countries;
+    country?: string;
     new?: boolean;
     sex?: UserSex;
     created_date?: string;

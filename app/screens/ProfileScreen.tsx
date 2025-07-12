@@ -14,7 +14,7 @@ interface ChangePasswordRequest {
 }
 
 export const ProfileScreen = () => {
-    const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { user, isAuthenticated, token } = useSelector((state: RootState) => state.auth);
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
     const [showCountryPicker, setShowCountryPicker] = useState(false);
     const [showSexPicker, setShowSexPicker] = useState(false);
@@ -60,10 +60,11 @@ export const ProfileScreen = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`/api/user/${user?.user_id}`, {
+            const response = await fetch(`http://143.244.190.174:8443/user/${user?.user_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     ...formData,
@@ -91,10 +92,11 @@ export const ProfileScreen = () => {
 
     const handlePasswordChange = async () => {
         try {
-            const response = await fetch('/api/user/password', {
+            const response = await fetch('http://143.244.190.174:8443/user/password', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     email: user?.email,
