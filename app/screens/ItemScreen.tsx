@@ -204,7 +204,7 @@ const ItemScreen = () => {
                         {post.entity?.vote_average && (
                             <View style={styles.ratingContainer}>
                                 <Text style={styles.ratingText}>
-                                    {(post.entity.vote_average / 2).toFixed(1)}/5
+                                    {post.entity.vote_average ? (post.entity.vote_average / 2).toFixed(1) : '0.0'}/5
                                 </Text>
                             </View>
                         )}

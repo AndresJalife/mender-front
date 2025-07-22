@@ -14,6 +14,16 @@ configureReanimatedLogger({
   strict: false,
 });
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs(true);
+
+// Esto evita errores uncaught
+ErrorUtils.setGlobalHandler((error, isFatal) => {
+  // Podés loguearlo si querés, o simplemente ignorar
+  console.log('Error capturado:', error);
+});
+
 export default function App() {
 
   return (
