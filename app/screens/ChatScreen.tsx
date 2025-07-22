@@ -27,6 +27,15 @@ const ChatScreen = () => {
         loadMessages();
     }, []);
 
+    useEffect(() => {
+        // Auto-scroll when typing indicator appears
+        if (isTyping && flatListRef.current) {
+            setTimeout(() => {
+                flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+            }, 100);
+        }
+    }, [isTyping]);
+
     const loadMessages = async () => {
         try {
             setIsLoading(true);
@@ -77,11 +86,8 @@ const ChatScreen = () => {
         setIsTyping(true);
 
         try {
-            // Send message to service
-            await chatService.sendMessage(newMessage);
-            
-            // Get the bot's response
-            const botResponse = await chatService.getLatestMessage();
+            // Send message and get bot's response
+            const botResponse = await chatService.sendMessage(newMessage);
             if (botResponse) {
                 setMessages(prev => [botResponse, ...prev]);
             }

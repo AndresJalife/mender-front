@@ -176,7 +176,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                             {/* Rating, Year, and Genres */}
                             <View style={styles.ratingRow}>
                                 <View style={styles.ratingContainer}>
-                                    <Text style={styles.rating}>☆ {data.entity?.vote_average ? data.entity.vote_average.toFixed(1) : 'N/A'}</Text>
+                                    <Text style={styles.rating}>☆ {data.entity?.vote_average ? (data.entity.vote_average / 2).toFixed(1) : 'N/A'}</Text>
                                     <Text style={styles.year}>{data.entity?.release_date ? data.entity.release_date.split('/')[2] : ''}</Text>
                                 </View>
                                 <View style={styles.genreContainer}>
@@ -259,7 +259,7 @@ const CarouselItem: React.FC<Props> = ({data, activeItem, isHomeTab}) => {
                         {/* Rating, Year, and Genres */}
                         <View style={styles.ratingRow}>
                             <View style={styles.ratingContainer}>
-                                <Text style={styles.rating}>☆ {data.entity?.vote_average ? data.entity.vote_average.toFixed(1) : 'N/A'}</Text>
+                                <Text style={styles.rating}>☆ {data.entity?.vote_average ? (data.entity.vote_average / 2).toFixed(1) : 'N/A'}</Text>
                                 <Text style={styles.year}>{data.entity?.release_date ? data.entity.release_date.split('/')[2] : ''}</Text>
                             </View>
                             <View style={styles.genreContainer}>

@@ -22,7 +22,7 @@ export const chatService = {
         }
     },
 
-    sendMessage: async (message: string): Promise<void> => {
+    sendMessage: async (message: string): Promise<Message | null> => {
         try {
             const response = await getAuthenticatedRequest('/chat/message', {
                 method: 'POST',
@@ -32,6 +32,8 @@ export const chatService = {
             if (!response?.ok) {
                 throw new Error('Failed to send message');
             }
+            
+            return await response?.json();
         } catch (error) {
             console.error('Error sending message:', error);
             throw error;
