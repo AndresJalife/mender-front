@@ -1,6 +1,18 @@
 import { store } from '../store/store';
 import { loginService } from './loginService';
-const API_BASE_URL = 'http://143.244.190.174:8443';
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+
+// Platform-aware API configuration
+const getApiBaseUrl = () => {
+    // if (__DEV__) {
+    //     return 'http://192.168.0.192:8443';
+    // }
+    // Production environment
+    return 'http://143.244.190.174:8443';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const getAuthenticatedRequest = async (endpoint: string, options: RequestInit = {}): Promise<Response | undefined> => {
     const state = store.getState();
