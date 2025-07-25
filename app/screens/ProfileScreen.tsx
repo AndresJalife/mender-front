@@ -4,6 +4,7 @@ import RootState from '../types/RootState';
 import { store } from '../store/store';
 import { logout, updateUser } from '../store/auth';
 import { colors } from '../constants/colors';
+import { cacheService } from '../services/cacheService';
 import { Countries, UserSex } from '../types/enums';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -117,6 +118,8 @@ export const ProfileScreen = () => {
     };
 
     const handleLogout = () => {
+        // Clear all cache before logout
+        cacheService.clearAllCache();
         store.dispatch(logout());
     };
 

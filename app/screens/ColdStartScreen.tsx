@@ -35,7 +35,18 @@ const ColdStartScreen = () => {
         try {
             setIsLoading(true);
             const data = await postService.getColdStartItems();
-            setItems(data);
+            
+            // Ensure all items start with seen=false and liked=false
+            const resetItems = data.map(item => ({
+                ...item,
+                user_post_info: {
+                    ...item.user_post_info,
+                    seen: false,
+                    liked: false
+                }
+            }));
+            
+            setItems(resetItems);
         } catch (error) {
             console.error('Error fetching cold start items:', error);
         } finally {

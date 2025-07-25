@@ -14,9 +14,15 @@ const FeedScreen = ({ currentTab }: { currentTab: string }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isFilterLoading, setIsFilterLoading] = useState(false);
     const filters = useSelector((state: RootState) => state.filter.filters);
-    const hasActiveFilters = Object.entries(filters).some(([_, value]) => 
-        value !== undefined && value !== '' && value !== null
-    );
+    const hasActiveFilters = Object.entries(filters).some(([_, value]) => {
+        if (value === undefined || value === '' || value === null) {
+            return false;
+        }
+        if (Array.isArray(value) && value.length === 0) {
+            return false;
+        }
+        return true;
+    });
     const [seenTmdbIds, setSeenTmdbIds] = useState<number[]>([]);
 
     const fetchPosts = async (shouldReplace = false) => {

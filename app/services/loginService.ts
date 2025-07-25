@@ -5,6 +5,7 @@ import { Countries, UserSex } from '../types/enums';
 import User from '../types/User';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { cacheService } from './cacheService';
 
 // Platform-aware API configuration (same as apiService.ts)
 const getApiBaseUrl = () => {
@@ -106,6 +107,9 @@ export const loginService = {
                     console.log('userResponse', userResponse);
                     
                     const userData: User = await userResponse.json();
+
+                    // Clear all cache before setting new user data
+                    cacheService.clearAllCache();
 
                     // Dispatch login success action to Redux store with complete user data
                     store.dispatch(loginSuccess({
