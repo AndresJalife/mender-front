@@ -141,7 +141,7 @@ const SearchScreen = () => {
                         style={styles.searchInput}
                         value={query}
                         onChangeText={handleQueryChange}
-                        placeholder="Search Movies or TV Shows..."
+                        placeholder="Search Movies, Directors, Actors..."
                         placeholderTextColor={colors.textMuted}
                         autoCapitalize="none"
                     />

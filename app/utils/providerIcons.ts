@@ -10,6 +10,7 @@ export const getProviderIcon = (providerName: string | undefined): string | null
             return 'https://image.tmdb.org/t/p/original/7rwgEs15tFwyR9NPQ5vpzxTj19Q.jpg';
         case 'hbo max':
         case 'hbo':
+        case 'max':
             return 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBX8kQEjtj-2RQNnyrVPgb4g7uDyyIJyDDQtzNSz9kx_HYcdnSVAo63P3uEbb2U1FB33UYX25PqfQhONYrhozXOORQ3EgFEkBOoLewRRSXdNzvlln45QDEeBzongeAYM2qw-FcqlMVAjgBjqz_XDobvyBz-6xlX2sQmihiFY7oLj3mgE0rkkWrIK4ZxwA/w1200-h675-p-k-no-nu/portada_max.png';
         case 'prime video':
         case 'amazon prime':
