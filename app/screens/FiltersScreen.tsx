@@ -48,7 +48,7 @@ export default function FiltersScreen() {
     const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
 
     // Add ratings array
-    const ratings = Array.from({ length: 11 }, (_, i) => ({ 
+    const ratings = Array.from({ length: 6 }, (_, i) => ({ 
         label: i.toString(), 
         value: i.toString() 
     }));
@@ -58,8 +58,8 @@ export default function FiltersScreen() {
             genres: localFilters.genres,
             min_release_date: localFilters.min_release_date || undefined,
             max_release_date: localFilters.max_release_date || undefined,
-            min_rating: localFilters.min_rating ? parseFloat(localFilters.min_rating) : undefined,
-            max_rating: localFilters.max_rating ? parseFloat(localFilters.max_rating) : undefined
+            min_rating: localFilters.min_rating ? parseFloat(localFilters.min_rating) * 2 : undefined,
+            max_rating: localFilters.max_rating ? parseFloat(localFilters.max_rating) * 2 : undefined
         };
         
         dispatch(setFilters(filters));
